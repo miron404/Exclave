@@ -41,7 +41,7 @@ require (
 	github.com/metacubex/randv2 v0.2.1-0.20260726125100-81aa96a9b1a5 // indirect
 	github.com/metacubex/utls v1.8.7 // indirect
 	github.com/miekg/dns v1.1.73 // indirect
-	github.com/miron404/connect-ip-go v0.0.0-20260828212855-30b3cfe52fb9 // indirect
+	github.com/miron404/connect-ip-go v0.0.0-20260828231553-a6b34803dbe5 // indirect
 	github.com/pires/go-proxyproto v0.15.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.61.0 // indirect
