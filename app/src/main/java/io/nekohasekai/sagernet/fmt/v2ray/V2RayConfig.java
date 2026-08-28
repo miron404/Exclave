@@ -700,6 +700,8 @@ public class V2RayConfig {
                     return SnellOutboundConfigurationObject.class;
                 case "shadowquic":
                     return ShadowQUICOutboundConfigurationObject.class;
+                case "masque":
+                    return MasqueOutboundConfigurationObject.class;
             }
             return null;
         }
@@ -1042,6 +1044,24 @@ public class V2RayConfig {
         public Boolean zeroRTTHandshake;
         public String serverName;
         public List<String> alpn;
+
+    }
+
+    public static class MasqueOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String http2Address;
+        public String privateKey;
+        public String endpointPublicKey;
+        public List<String> localAddress;
+        public String serverName;
+        public Integer mtu;
+        public Boolean useHTTP2;
+        public Boolean allowInsecure;
+        public Integer keepalivePeriod;
+        public Integer initialPacketSize;
+        public String domainStrategy;
 
     }
 

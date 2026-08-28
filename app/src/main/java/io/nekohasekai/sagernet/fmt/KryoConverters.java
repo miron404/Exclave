@@ -46,6 +46,7 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean;
+import io.nekohasekai.sagernet.fmt.masque.MasqueBean;
 import io.nekohasekai.sagernet.fmt.snell.SnellBean;
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean;
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean;
@@ -194,6 +195,12 @@ public class KryoConverters {
     public static SnellBean snellDeserialize(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
         return deserialize(new SnellBean(), bytes);
+    }
+
+    @TypeConverter
+    public static MasqueBean masqueDeserialize(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return null;
+        return deserialize(new MasqueBean(), bytes);
     }
 
     @TypeConverter

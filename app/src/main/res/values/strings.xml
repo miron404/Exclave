@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Exclave</string>
+    <string name="app_name" translatable="false">Exclave MASQUE</string>
     <string name="project">Project</string>
     <string name="github">Source code</string>
     <string name="app_version">Version</string>
@@ -619,6 +619,20 @@
     <string name="snell_obfs_mode">Obfuscation mode</string>
     <string name="snell_obfs_host">Obfuscation host</string>
     <string name="snell_mode">Mode</string>
+    <string name="action_masque" translatable="false">MASQUE</string>
+    <string name="masque_mode">Transport</string>
+    <string name="masque_mode_quic" translatable="false">QUIC (HTTP/3)</string>
+    <string name="masque_mode_http2" translatable="false">HTTP/2</string>
+    <string name="masque_http2_address">HTTP/2 endpoint</string>
+    <string name="masque_http2_address_sum">Endpoint used in HTTP/2 mode. Leave empty to use 162.159.198.2.</string>
+    <string name="masque_local_address">Assigned addresses</string>
+    <string name="masque_local_address_sum">Addresses assigned to this device inside the tunnel, one per line.</string>
+    <string name="masque_private_key">Device private key</string>
+    <string name="masque_endpoint_public_key">Endpoint public key</string>
+    <string name="masque_endpoint_public_key_sum">PEM public key the endpoint is pinned to.</string>
+    <string name="masque_keepalive_period">Keepalive period (s)</string>
+    <string name="masque_initial_packet_size">Initial packet size</string>
+    <string name="masque_initial_packet_size_sum">0 keeps path MTU discovery enabled.</string>
     <string name="anytls_disable_reuse">Disable connection reuse</string>
     <string name="chrome_parrot" translatable="false">Chrome parrot</string>
     <string name="chrome_parrot_summary">Imitate Chrome\'s QUIC Client Hello</string>

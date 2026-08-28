@@ -47,6 +47,7 @@ import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.masque.MasqueBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
@@ -1801,6 +1802,43 @@ fun buildV2RayConfig(
                                         userKey = bean.userKey
                                     }
                                 })
+                            } else if (bean is MasqueBean) {
+                                protocol = "masque"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    V2RayConfig.MasqueOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        if (bean.mode == MasqueBean.MODE_HTTP2) {
+                                            useHTTP2 = true
+                                            http2Address = bean.http2Address.ifEmpty {
+                                                MasqueBean.DEFAULT_HTTP2_ADDRESS
+                                            }
+                                        }
+                                        privateKey = bean.privateKey
+                                        if (bean.allowInsecure) {
+                                            allowInsecure = true
+                                        } else {
+                                            endpointPublicKey = bean.endpointPublicKey
+                                        }
+                                        localAddress = bean.localAddress.listByLineOrComma()
+                                        if (bean.sni.isNotEmpty()) {
+                                            serverName = bean.sni
+                                        }
+                                        if (bean.mtu > 0) {
+                                            mtu = bean.mtu
+                                        }
+                                        if (bean.keepalivePeriod > 0) {
+                                            keepalivePeriod = bean.keepalivePeriod
+                                        }
+                                        if (bean.initialPacketSize > 0) {
+                                            initialPacketSize = bean.initialPacketSize
+                                        }
+                                    })
+                                // The tunnel dials on its own network stack, which needs
+                                // an address rather than a name.
+                                if (currentDomainStrategy == "AsIs") {
+                                    currentDomainStrategy = "UseIP"
+                                }
                             } else if (bean is MieruBean) {
                                 protocol = "mieru"
                                 settings = LazyOutboundConfigurationObject(this,

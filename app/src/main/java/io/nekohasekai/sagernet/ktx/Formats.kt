@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.fmt.http3.parseHttp3
 import io.nekohasekai.sagernet.fmt.hysteria2.parseHysteria2
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
 import io.nekohasekai.sagernet.fmt.mieru.parseMieru
+import io.nekohasekai.sagernet.fmt.masque.parseMasque
 import io.nekohasekai.sagernet.fmt.naive.parseNaive
 import io.nekohasekai.sagernet.fmt.parseBackup
 import io.nekohasekai.sagernet.fmt.shadowquic.parseShadowQUIC
@@ -129,6 +130,10 @@ fun parseShareLinks(text: String): List<AbstractBean> {
         } else if (startsWith("sq://", ignoreCase = true) || startsWith("shadowquic://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseShadowQUIC(this))
+            }
+        } else if (startsWith("masque://", ignoreCase = true)) {
+            runCatching {
+                entities.add(parseMasque(this))
             }
         }
     }

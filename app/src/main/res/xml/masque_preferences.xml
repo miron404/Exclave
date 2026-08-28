@@ -1,0 +1,79 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:icon="@drawable/ic_social_emoji_symbols"
+        app:key="profileName"
+        app:title="@string/profile_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <PreferenceCategory app:title="@string/proxy_cat">
+
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="serverAddress"
+            app:title="@string/server_address"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="serverPort"
+            app:title="@string/server_port"
+            app:useSimpleSummaryProvider="true" />
+        <io.nekohasekai.sagernet.widget.SimpleMenuPreference
+            app:defaultValue="quic"
+            app:entries="@array/masque_mode_entry"
+            app:entryValues="@array/masque_mode_value"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="serverMasqueMode"
+            app:title="@string/masque_mode"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="serverMasqueHTTP2Address"
+            app:summary="@string/masque_http2_address_sum"
+            app:title="@string/masque_http2_address" />
+        <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverPrivateKey"
+            app:title="@string/masque_private_key"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_action_copyright"
+            app:key="serverMasqueEndpointPublicKey"
+            app:summary="@string/masque_endpoint_public_key_sum"
+            app:title="@string/masque_endpoint_public_key" />
+        <EditTextPreference
+            app:dialogMessage="@string/one_per_line"
+            app:icon="@drawable/ic_baseline_domain_24"
+            app:key="serverLocalAddress"
+            app:summary="@string/masque_local_address_sum"
+            app:title="@string/masque_local_address" />
+        <EditTextPreference
+            app:icon="@drawable/ic_action_copyright"
+            app:key="serverSNI"
+            app:title="@string/sni"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="serverMTU"
+            app:title="@string/mtu"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_cached"
+            app:key="serverMasqueKeepalivePeriod"
+            app:title="@string/masque_keepalive_period"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverMasqueInitialPacketSize"
+            app:summary="@string/masque_initial_packet_size_sum"
+            app:title="@string/masque_initial_packet_size" />
+        <SwitchPreference
+            app:icon="@drawable/ic_notification_enhanced_encryption"
+            app:key="serverAllowInsecure"
+            app:title="@string/allow_insecure" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

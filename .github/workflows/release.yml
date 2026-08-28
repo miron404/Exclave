@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Checkout Core Submodule
+        run: git submodule update --init library/core/deps/exclave-core
       - name: Setup Go
         uses: actions/setup-go@v7
         with:

@@ -10,18 +10,19 @@ require (
 	filippo.io/mldsa v0.0.0-20260711112038-ff3f469cee29 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
-	github.com/andybalholm/brotli v1.2.2 // indirect
+	github.com/andybalholm/brotli v1.2.3 // indirect
 	github.com/anytls/sing-anytls v0.0.13 // indirect
 	github.com/apernet/quic-go v0.61.1-0.20260806010916-184d081eef3e // indirect
 	github.com/dgryski/go-camellia v0.0.0-20191119043421-69a8a13fb23d // indirect
 	github.com/dgryski/go-metro v0.0.0-20250106013310-edb8663e5e33 // indirect
+	github.com/dunglas/httpsfv v1.0.2 // indirect
 	github.com/enfein/mieru/v3 v3.36.0 // indirect
 	github.com/exclavenetwork/exclave-core/v5 v5.50.1-0.20260826120051-e1bed3572310 // indirect
 	github.com/exclavenetwork/go-stun v0.1.7-0.20260811120819-d09f4628f065 // indirect
 	github.com/exclavenetwork/hysteria/core/v2 v2.12.2-1 // indirect
 	github.com/exclavenetwork/hysteria/extras/v2 v2.12.2-1 // indirect
-	github.com/exclavenetwork/sing-juicity v0.3.0-beta.1 // indirect
-	github.com/exclavenetwork/sing-shadowquic v0.0.0-20260801175020-65c7acc31f93 // indirect
+	github.com/exclavenetwork/sing-juicity v0.3.0-beta.2 // indirect
+	github.com/exclavenetwork/sing-shadowquic v0.0.0-20260828154517-83f88a9ce329 // indirect
 	github.com/gofrs/uuid/v5 v5.5.1 // indirect
 	github.com/golang-collections/go-datastructures v0.0.0-20150211160725-59788d5eb259 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -40,15 +41,16 @@ require (
 	github.com/metacubex/randv2 v0.2.1-0.20260726125100-81aa96a9b1a5 // indirect
 	github.com/metacubex/utls v1.8.7 // indirect
 	github.com/miekg/dns v1.1.73 // indirect
+	github.com/miron404/connect-ip-go v0.0.0-20260828212855-30b3cfe52fb9 // indirect
 	github.com/pires/go-proxyproto v0.15.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.61.0 // indirect
 	github.com/refraction-networking/utls v1.8.3-0.20260802151714-23b1dac19c06 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
-	github.com/sagernet/quic-go v0.61.0-sing-box-mod.5 // indirect
+	github.com/sagernet/quic-go v0.61.0-sing-box-mod.6 // indirect
 	github.com/sagernet/sing v0.9.0-beta.4 // indirect
 	github.com/sagernet/sing-mux v0.3.5 // indirect
-	github.com/sagernet/sing-quic v0.7.0-beta.3 // indirect
+	github.com/sagernet/sing-quic v0.7.0-beta.4 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.9 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2 // indirect
 	github.com/sagernet/sing-snell v0.0.0-20260824011554-f8ab8029469a // indirect
@@ -58,6 +60,7 @@ require (
 	github.com/v2fly/ss-bloomring v0.0.0-20210312155135-28617310f63e // indirect
 	github.com/v2fly/struc v0.0.0-20241227015403-8e8fa1badfd6 // indirect
 	github.com/xtaci/smux v1.5.57 // indirect
+	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/exp v0.0.0-20260820122028-d6e0b57b1a69 // indirect
@@ -77,3 +80,5 @@ require (
 
 // workaround https://github.com/google/gvisor/commit/868dfbce4fd59f03145e2bc5ac0b585917c371fa
 replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255d
+
+replace github.com/exclavenetwork/exclave-core/v5 => ./deps/exclave-core

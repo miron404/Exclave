@@ -367,6 +367,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverSnellObfsHost by profileCacheStore.string(Key.SERVER_SNELL_OBFS_HOST)
     var serverSnellMode by profileCacheStore.string(Key.SERVER_SNELL_MODE)
 
+    var serverMasqueMode by profileCacheStore.string(Key.SERVER_MASQUE_MODE)
+    var serverMasqueHTTP2Address by profileCacheStore.string(Key.SERVER_MASQUE_HTTP2_ADDRESS)
+    var serverMasqueEndpointPublicKey by profileCacheStore.string(Key.SERVER_MASQUE_ENDPOINT_PUBLIC_KEY)
+    var serverMasqueKeepalivePeriod by profileCacheStore.stringToInt(Key.SERVER_MASQUE_KEEPALIVE_PERIOD)
+    var serverMasqueInitialPacketSize by profileCacheStore.stringToInt(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)
+
     var serverVMessExperimentalAuthenticatedLength by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_AUTHENTICATED_LENGTH)
     var serverVMessExperimentalNoTerminationSignal by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_NO_TERMINATION_SIGNAL)
 

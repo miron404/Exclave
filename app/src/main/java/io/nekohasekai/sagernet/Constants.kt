@@ -259,6 +259,12 @@ object Key {
     const val SERVER_SNELL_OBFS_HOST = "serverSnellObfsHost"
     const val SERVER_SNELL_MODE = "serverSnellMode"
 
+    const val SERVER_MASQUE_MODE = "serverMasqueMode"
+    const val SERVER_MASQUE_HTTP2_ADDRESS = "serverMasqueHTTP2Address"
+    const val SERVER_MASQUE_ENDPOINT_PUBLIC_KEY = "serverMasqueEndpointPublicKey"
+    const val SERVER_MASQUE_KEEPALIVE_PERIOD = "serverMasqueKeepalivePeriod"
+    const val SERVER_MASQUE_INITIAL_PACKET_SIZE = "serverMasqueInitialPacketSize"
+
     const val SERVER_NAIVE_NO_POST_QUANTUM = "serverNaiveNoPostQuantum"
 
     const val SERVER_SING_UOT_CATEGORY = "serverSingUotCategory"
