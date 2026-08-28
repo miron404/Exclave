@@ -1,0 +1,87 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.github.miron404.exclave",
+  "variantName": "ossRelease",
+  "elements": [
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1897,
+      "versionName": "0.17.55",
+      "outputFile": "Exclave-0.17.55-armeabi-v7a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1898,
+      "versionName": "0.17.55",
+      "outputFile": "Exclave-0.17.55-x86_64.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1896,
+      "versionName": "0.17.55",
+      "outputFile": "Exclave-0.17.55-x86.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1899,
+      "versionName": "0.17.55",
+      "outputFile": "Exclave-0.17.55-arm64-v8a.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/Exclave-0.17.55-armeabi-v7a.dm",
+        "baselineProfiles/1/Exclave-0.17.55-x86_64.dm",
+        "baselineProfiles/1/Exclave-0.17.55-x86.dm",
+        "baselineProfiles/1/Exclave-0.17.55-arm64-v8a.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/Exclave-0.17.55-armeabi-v7a.dm",
+        "baselineProfiles/0/Exclave-0.17.55-x86_64.dm",
+        "baselineProfiles/0/Exclave-0.17.55-x86.dm",
+        "baselineProfiles/0/Exclave-0.17.55-arm64-v8a.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 23
+}
