@@ -68,7 +68,13 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
+          # The run id makes every run save an updated cache, so the task
+          # outputs a build produces are there for the next one. Without it the
+          # key never changes and the first cache is kept forever.
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}-${{ github.run_id }}
+          restore-keys: |
+            gradle-${{ hashFiles('**/*.gradle.kts') }}-
+            gradle-
       - name: Gradle Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
