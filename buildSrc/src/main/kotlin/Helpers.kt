@@ -137,11 +137,19 @@ fun Project.setupAppCommon(projectName: String = "") {
         @Suppress("UnstableApiUsage")
         bundle.abi.enableSplit = false
         if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames.any { it.lowercase().contains("assemble") }) {
+            // ABI_FILTERS narrows the build to the ABIs actually wanted, which is
+            // what makes a development build quick. Unset means all of them.
+            val configured = (System.getenv("ABI_FILTERS") ?: providers.gradleProperty("abiFilters").orNull)
+                ?.split(',')
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                .orEmpty()
+            val abis = configured.ifEmpty { listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a") }
             splits.abi.apply {
                 isEnable = true
                 isUniversalApk = false
                 reset()
-                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+                include(*abis.toTypedArray())
             }
         }
     }
@@ -201,10 +209,6 @@ fun Project.setupApp() {
         productFlavors.create("oss") {
             minSdk = 23
         }
-        productFlavors.create("legacy") {
-            minSdk = 21
-            proguardFiles("proguard-rules-legacy.pro")
-        }
         tasks.register("downloadAssets") {
             downloadAssets(update = false)
         }
@@ -236,13 +240,6 @@ fun Project.setupApp() {
     tasks.configureEach {
         if (name.contains("preBuild")) {
             dependsOn(":app:exportLibraryDefinitionsOssRelease")
-            dependsOn(":app:exportLibraryDefinitionsLegacyRelease")
-        }
-    }
-    if (tasks.findByPath(":app:exportLibraryDefinitionsLegacyRelease") != null
-        && tasks.findByPath(":app:exportLibraryDefinitionsOssRelease") != null) {
-        tasks.named(":app:exportLibraryDefinitionsLegacyRelease") {
-            mustRunAfter(":app:exportLibraryDefinitionsOssRelease")
         }
     }
 }

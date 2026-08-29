@@ -31,9 +31,6 @@ aboutLibraries {
         create("ossRelease") {
             outputFile = file("src/main/aboutlibraries/aboutlibraries.json")
         }
-        create("legacyRelease") {
-            outputFile = file("src/main/aboutlibraries/aboutlibraries_legacy.json")
-        }
     }
 }
 
@@ -73,18 +70,4 @@ dependencies {
     implementation(libs.editorkit)
     implementation(libs.editorkit.language.json)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-
-    "legacyImplementation"(libs.core.ktx.minSdk21)
-    "legacyImplementation"(libs.activity.ktx.minSdk21)
-    "legacyImplementation"(libs.fragment.ktx.minSdk21)
-    "legacyImplementation"(libs.camera.view.minSdk21)
-    "legacyImplementation"(libs.camera.lifecycle.minSdk21)
-    "legacyImplementation"(libs.camera.camera2.minSdk21)
-    "legacyImplementation"(libs.appcompat.minSdk21)
-    "legacyImplementation"(libs.work.runtime.ktx.minSdk21)
-    "legacyImplementation"(libs.work.multiprocess.minSdk21)
-    "legacyImplementation"(libs.room.runtime.minSdk21)
-    "kspLegacy"(libs.room.compiler.minSdk21)
-    "legacyImplementation"(libs.room.ktx.minSdk21)
-    "legacyImplementation"(libs.material.minSdk21)
 }

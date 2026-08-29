@@ -23,6 +23,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      # A push is the development cycle, so build only what gets installed.
+      # A manual run builds every ABI and flavour, for a release.
+      ABI_FILTERS: ${{ github.event_name == 'push' && 'arm64-v8a' || '' }}
+      GOMOBILE_TARGET: ${{ github.event_name == 'push' && 'android/arm64' || 'android' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -69,17 +74,12 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           ./gradlew :app:downloadAssets
-          ./gradlew :app:assembleOssRelease :app:assembleLegacyRelease
+          ./gradlew :app:assembleOssRelease
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: APKs
           path: app/build/outputs/apk/oss/release
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: APKs-legacy
-          path: app/build/outputs/apk/legacy/release
   publish:
     name: Publish Release
     if: github.event.inputs.release == 'y' && github.event.inputs.tag != ''
@@ -97,11 +97,6 @@ jobs:
         with:
           name: APKs
           path: artifacts/oss
-      - name: Download Artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: APKs-legacy
-          path: artifacts/legacy
       - name: Publish Pre-release
         if: github.event.inputs.prerelease == 'y'
         run: |
