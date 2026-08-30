@@ -92,6 +92,17 @@ packet picked up between the two panics the process with "send on closed
 channel", which a url test over a group landing on this outbound hits readily.
 `netstack/tun.go` closes a separate channel and both sides give up on it.
 
+**The keepalive period is halved unless the idle timeout says otherwise.**
+quic-go pings at `min(KeepAlivePeriod, MaxIdleTimeout/2)`, and an unset
+`MaxIdleTimeout` is 30 seconds, so the 30 second default period used to mean a
+ping every 15 seconds. On a phone that is a radio wakeup every 15 seconds for as
+long as the tunnel is up, and raising the period in the profile did nothing on
+its own. `quicConfig` now derives the idle timeout from the period instead, which
+leaves one unanswered ping of grace. The endpoint's own advertised idle timeout
+is still taken into account and the smaller of the two wins, so the period is a
+ceiling rather than a promise. `TestKeepalivePeriodIsNotHalvedByTheIdleTimeout`
+holds the relationship.
+
 **Below 1280 there is no IPv6.** gVisor refuses a link smaller than that
 outright, so the tunnel drops IPv6 addresses when it is resized below it, and
 says so. A profile MTU under 1280 costs IPv6 the same way.
@@ -182,4 +193,11 @@ The Kotlin side cannot; CI is the first thing that compiles it.
 - A url test starts an instance per proxy, and each builds its own tunnel to
   Cloudflare. That is how url test works, not something this outbound decides,
   but it makes the measurements pessimistic.
+- The HTTP/2 mode has no liveness check: `keepalive_period` reaches quic-go
+  only, and `http2.Transport.ReadIdleTimeout` is left at zero. A TCP path that
+  dies silently would park both pumps on a socket that never delivers again,
+  with nothing to fail and so nothing to make the supervisor redial. Measured
+  against, rather than overlooked: the mode holds a connection across a night
+  idle without one, and a ping frequent enough to be useful would cost the
+  wakeups this mode does not otherwise need.
 - Profile strings are English only.
