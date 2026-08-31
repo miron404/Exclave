@@ -31,10 +31,14 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.TypedArrayUtils
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.setPadding
 import androidx.core.widget.NestedScrollView
@@ -103,12 +107,11 @@ class ColorPickerPreference
         }
     }
 
-    fun getColor(res: Resources, color: Int): Drawable {
-        val drawable = ResourcesCompat.getDrawable(
-            res,
-            R.drawable.ic_baseline_fiber_manual_record_24,
-            null
-        )!!
+    fun getColor(res: Resources, color: Int): Drawable =
+        tinted(res, R.drawable.ic_baseline_fiber_manual_record_24, color)
+
+    private fun tinted(res: Resources, @DrawableRes drawableId: Int, color: Int): Drawable {
+        val drawable = ResourcesCompat.getDrawable(res, drawableId, null)!!
         DrawableCompat.setTint(drawable.mutate(), color)
         return drawable
     }
@@ -117,50 +120,113 @@ class ColorPickerPreference
         super.onClick()
 
         lateinit var dialog: AlertDialog
+        // An unset preference still themes the app with the default, so show
+        // that as the selected one rather than showing nothing selected.
+        val current = DataStore.appTheme.let { if (it == 0) Theme.PINK else it }
 
-        val flexbox = FlexboxLayout(context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            flexWrap = FlexWrap.WRAP
-            justifyContent = JustifyContent.SPACE_BETWEEN
-            val colors = context.resources.getIntArray(R.array.material_colors)
-            for ((i, color) in colors.withIndex()) {
-                val view = getImageViewAtColor(color, 64, 0).apply {
-                    setOnClickListener {
+        val content = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp2px(16), dp2px(8), dp2px(16), 0)
+
+            addView(sectionLabel(R.string.theme_palette_material))
+            addView(swatches {
+                val colors = context.resources.getIntArray(R.array.material_colors)
+                for ((i, color) in colors.withIndex()) {
+                    addView(swatch(color, current == i + 1) {
                         persistInt(i + 1)
                         dialog.dismiss()
                         callChangeListener(i + 1)
-                    }
+                    })
                 }
-                addView(view)
-            }
-            // The last swatch is not a colour of its own: it stands for whatever
-            // was last typed in, and opens the field to type another.
-            addView(getImageViewAtColor(
-                ContextCompat.getColor(context, Theme.hueColorRes(DataStore.appThemeHue)), 64, 0
-            ).apply {
-                setOnClickListener {
-                    dialog.dismiss()
-                    askForColor()
+            })
+
+            addView(divider())
+            addView(sectionLabel(R.string.theme_palette_muted))
+            addView(swatches {
+                for (i in 0 until Theme.hueCount) {
+                    val selected = current == Theme.CUSTOM && DataStore.appThemeHue == i
+                    addView(swatch(ContextCompat.getColor(context, Theme.hueColorRes(i)), selected) {
+                        DataStore.appThemeHue = i
+                        persistInt(Theme.CUSTOM)
+                        dialog.dismiss()
+                        callChangeListener(Theme.CUSTOM)
+                    })
                 }
             })
         }
 
         val scrollView = NestedScrollView(context).apply {
-            setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            addView(flexbox)
+            addView(content)
         }
 
         dialog = MaterialAlertDialogBuilder(context).setTitle(title)
             .setView(scrollView)
+            .setNeutralButton(R.string.theme_custom) { _, _ -> askForColor() }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+    }
+
+    private fun swatches(build: FlexboxLayout.() -> Unit) = FlexboxLayout(context).apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        flexWrap = FlexWrap.WRAP
+        justifyContent = JustifyContent.SPACE_BETWEEN
+        build()
+    }
+
+    private fun sectionLabel(@StringRes text: Int) = TextView(context).apply {
+        setText(text)
+        textSize = 12f
+        isAllCaps = true
+        letterSpacing = 0.08f
+        setTextColor(context.getColorAttr(android.R.attr.textColorSecondary))
+        setPadding(dp2px(4), dp2px(12), 0, dp2px(8))
+    }
+
+    private fun divider() = View(context).apply {
+        layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, dp2px(1)
+        ).apply { topMargin = dp2px(12) }
+        setBackgroundColor(
+            ColorUtils.setAlphaComponent(
+                context.getColorAttr(android.R.attr.textColorSecondary), 40
+            )
+        )
+    }
+
+    /** One colour, with a tick on it when it is the one in use. */
+    private fun swatch(color: Int, selected: Boolean, onSelected: () -> Unit): View {
+        val size = dp2px(64)
+        return FrameLayout(context).apply {
+            layoutParams = ViewGroup.LayoutParams(size, size)
+            addView(getImageViewAtColor(color, 64, 0))
+            if (selected) {
+                addView(ImageView(context).apply {
+                    layoutParams = FrameLayout.LayoutParams(size, size)
+                    setPadding(dp2px(19))
+                    // The wheel runs from tones that carry white to tones that
+                    // carry black, so the tick has to be picked per swatch.
+                    setImageDrawable(
+                        tinted(
+                            context.resources,
+                            R.drawable.ic_action_done,
+                            if (ColorUtils.calculateLuminance(color) > 0.4) {
+                                ContextCompat.getColor(context, R.color.black)
+                            } else {
+                                ContextCompat.getColor(context, R.color.white)
+                            }
+                        )
+                    )
+                })
+            }
+            setOnClickListener { onSelected() }
+        }
     }
 
     /**

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="theme_palette_material">Material</string>
+    <string name="theme_palette_muted">Muted</string>
     <string name="theme_custom">Custom colour</string>
     <string name="theme_custom_message">A hex colour, snapped to the nearest hue of a restrained wheel.</string>
     <string name="theme_custom_hint">#RRGGBB</string>
