@@ -1,19 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--
+      The wallpaper themes. The accent half was already here; what is added is
+      the neutral half, which is what makes the result read as Material You
+      rather than as the stock theme tinted with an accent.
+
+      The accents are deliberately left where they were. This app is shaped the
+      Material 2 way: the app bar is painted with colorPrimary and carries white
+      text through ThemeOverlay.AppCompat.Dark.ActionBar and whiteOrTextPrimary.
+      Material 3 would put a pale tone 80 in colorPrimary in the dark theme,
+      which would leave that text unreadable, so the primary stays a tone the
+      app bar can carry and only the surfaces follow the wallpaper.
+
+      The neutrals themselves live in colors.xml so that the night variant is a
+      second set of colors rather than a second copy of the theme.
+    -->
     <style name="Theme.SagerNet.Dynamic">
         <item name="colorPrimary">@android:color/system_accent1_600</item>
         <item name="colorPrimaryDark">@android:color/system_accent1_700</item>
+        <item name="colorPrimaryVariant">@android:color/system_accent1_700</item>
+        <item name="colorOnPrimary">@android:color/system_accent1_0</item>
         <item name="colorAccent">@android:color/system_accent1_400</item>
         <item name="colorMaterial100">@android:color/system_accent1_300</item>
         <item name="colorMaterial300">@android:color/system_accent1_500</item>
+
+        <item name="colorSecondary">@color/dynamic_secondary</item>
+        <item name="colorSecondaryVariant">@color/dynamic_secondary_variant</item>
+        <item name="colorOnSecondary">@color/dynamic_on_secondary</item>
+
+        <item name="android:colorBackground">@color/dynamic_surface</item>
+        <item name="colorOnBackground">@color/dynamic_on_surface</item>
+        <item name="colorSurface">@color/dynamic_surface</item>
+        <item name="colorOnSurface">@color/dynamic_on_surface</item>
+        <item name="colorSurfaceVariant">@color/dynamic_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/dynamic_on_surface_variant</item>
     </style>
 
     <style name="Theme.SagerNet.Dialog.Dynamic">
         <item name="colorPrimary">@android:color/system_accent1_600</item>
         <item name="colorPrimaryDark">@android:color/system_accent1_700</item>
+        <item name="colorPrimaryVariant">@android:color/system_accent1_700</item>
+        <item name="colorOnPrimary">@android:color/system_accent1_0</item>
         <item name="colorAccent">@android:color/system_accent1_400</item>
         <item name="colorMaterial100">@android:color/system_accent1_300</item>
         <item name="colorMaterial300">@android:color/system_accent1_500</item>
+
+        <item name="colorSecondary">@color/dynamic_secondary</item>
+        <item name="colorSecondaryVariant">@color/dynamic_secondary_variant</item>
+        <item name="colorOnSecondary">@color/dynamic_on_secondary</item>
+
+        <item name="android:colorBackground">@color/dynamic_surface</item>
+        <item name="colorOnBackground">@color/dynamic_on_surface</item>
+        <item name="colorSurface">@color/dynamic_surface</item>
+        <item name="colorOnSurface">@color/dynamic_on_surface</item>
+        <item name="colorSurfaceVariant">@color/dynamic_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/dynamic_on_surface_variant</item>
     </style>
 
 </resources>

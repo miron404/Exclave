@@ -25,4 +25,23 @@
         <item>@color/material_light_black</item>
         <item>@android:color/system_accent1_600</item>
     </integer-array>
+
+    <!--
+      The neutral half of the dynamic theme, in its light form; values-night-v31
+      holds the dark one. Keeping these as colors rather than writing the theme
+      out twice means Theme.SagerNet.Dynamic stays a single definition, since a
+      style is replaced wholesale by a qualified copy rather than merged into it.
+
+      The tones follow the Material 3 dynamic palette. The platform ladder runs
+      the other way from the Material one: system_neutral1_10 is tone 99, almost
+      white, and system_neutral1_900 is tone 10, almost black.
+    -->
+    <color name="dynamic_surface">@android:color/system_neutral1_10</color>
+    <color name="dynamic_on_surface">@android:color/system_neutral1_900</color>
+    <color name="dynamic_surface_variant">@android:color/system_neutral2_100</color>
+    <color name="dynamic_on_surface_variant">@android:color/system_neutral2_700</color>
+
+    <color name="dynamic_secondary">@android:color/system_accent2_600</color>
+    <color name="dynamic_secondary_variant">@android:color/system_accent2_700</color>
+    <color name="dynamic_on_secondary">@android:color/system_accent2_0</color>
 </resources>
