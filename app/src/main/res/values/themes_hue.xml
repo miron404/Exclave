@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Generated alongside colors_hue.xml; see the note there. -->
+
+    <style name="Theme.SagerNet.Hue0">
+        <item name="colorPrimary">@color/hue_0_primary</item>
+        <item name="colorPrimaryDark">@color/hue_0_primary_dark</item>
+        <item name="colorAccent">@color/hue_0_accent</item>
+        <item name="colorMaterial100">@color/hue_0_material_100</item>
+        <item name="colorMaterial300">@color/hue_0_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue0">
+        <item name="colorPrimary">@color/hue_0_primary</item>
+        <item name="colorPrimaryDark">@color/hue_0_primary_dark</item>
+        <item name="colorAccent">@color/hue_0_accent</item>
+        <item name="colorMaterial100">@color/hue_0_material_100</item>
+        <item name="colorMaterial300">@color/hue_0_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue1">
+        <item name="colorPrimary">@color/hue_1_primary</item>
+        <item name="colorPrimaryDark">@color/hue_1_primary_dark</item>
+        <item name="colorAccent">@color/hue_1_accent</item>
+        <item name="colorMaterial100">@color/hue_1_material_100</item>
+        <item name="colorMaterial300">@color/hue_1_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue1">
+        <item name="colorPrimary">@color/hue_1_primary</item>
+        <item name="colorPrimaryDark">@color/hue_1_primary_dark</item>
+        <item name="colorAccent">@color/hue_1_accent</item>
+        <item name="colorMaterial100">@color/hue_1_material_100</item>
+        <item name="colorMaterial300">@color/hue_1_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue2">
+        <item name="colorPrimary">@color/hue_2_primary</item>
+        <item name="colorPrimaryDark">@color/hue_2_primary_dark</item>
+        <item name="colorAccent">@color/hue_2_accent</item>
+        <item name="colorMaterial100">@color/hue_2_material_100</item>
+        <item name="colorMaterial300">@color/hue_2_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue2">
+        <item name="colorPrimary">@color/hue_2_primary</item>
+        <item name="colorPrimaryDark">@color/hue_2_primary_dark</item>
+        <item name="colorAccent">@color/hue_2_accent</item>
+        <item name="colorMaterial100">@color/hue_2_material_100</item>
+        <item name="colorMaterial300">@color/hue_2_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue3">
+        <item name="colorPrimary">@color/hue_3_primary</item>
+        <item name="colorPrimaryDark">@color/hue_3_primary_dark</item>
+        <item name="colorAccent">@color/hue_3_accent</item>
+        <item name="colorMaterial100">@color/hue_3_material_100</item>
+        <item name="colorMaterial300">@color/hue_3_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue3">
+        <item name="colorPrimary">@color/hue_3_primary</item>
+        <item name="colorPrimaryDark">@color/hue_3_primary_dark</item>
+        <item name="colorAccent">@color/hue_3_accent</item>
+        <item name="colorMaterial100">@color/hue_3_material_100</item>
+        <item name="colorMaterial300">@color/hue_3_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue4">
+        <item name="colorPrimary">@color/hue_4_primary</item>
+        <item name="colorPrimaryDark">@color/hue_4_primary_dark</item>
+        <item name="colorAccent">@color/hue_4_accent</item>
+        <item name="colorMaterial100">@color/hue_4_material_100</item>
+        <item name="colorMaterial300">@color/hue_4_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue4">
+        <item name="colorPrimary">@color/hue_4_primary</item>
+        <item name="colorPrimaryDark">@color/hue_4_primary_dark</item>
+        <item name="colorAccent">@color/hue_4_accent</item>
+        <item name="colorMaterial100">@color/hue_4_material_100</item>
+        <item name="colorMaterial300">@color/hue_4_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue5">
+        <item name="colorPrimary">@color/hue_5_primary</item>
+        <item name="colorPrimaryDark">@color/hue_5_primary_dark</item>
+        <item name="colorAccent">@color/hue_5_accent</item>
+        <item name="colorMaterial100">@color/hue_5_material_100</item>
+        <item name="colorMaterial300">@color/hue_5_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue5">
+        <item name="colorPrimary">@color/hue_5_primary</item>
+        <item name="colorPrimaryDark">@color/hue_5_primary_dark</item>
+        <item name="colorAccent">@color/hue_5_accent</item>
+        <item name="colorMaterial100">@color/hue_5_material_100</item>
+        <item name="colorMaterial300">@color/hue_5_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue6">
+        <item name="colorPrimary">@color/hue_6_primary</item>
+        <item name="colorPrimaryDark">@color/hue_6_primary_dark</item>
+        <item name="colorAccent">@color/hue_6_accent</item>
+        <item name="colorMaterial100">@color/hue_6_material_100</item>
+        <item name="colorMaterial300">@color/hue_6_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue6">
+        <item name="colorPrimary">@color/hue_6_primary</item>
+        <item name="colorPrimaryDark">@color/hue_6_primary_dark</item>
+        <item name="colorAccent">@color/hue_6_accent</item>
+        <item name="colorMaterial100">@color/hue_6_material_100</item>
+        <item name="colorMaterial300">@color/hue_6_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue7">
+        <item name="colorPrimary">@color/hue_7_primary</item>
+        <item name="colorPrimaryDark">@color/hue_7_primary_dark</item>
+        <item name="colorAccent">@color/hue_7_accent</item>
+        <item name="colorMaterial100">@color/hue_7_material_100</item>
+        <item name="colorMaterial300">@color/hue_7_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue7">
+        <item name="colorPrimary">@color/hue_7_primary</item>
+        <item name="colorPrimaryDark">@color/hue_7_primary_dark</item>
+        <item name="colorAccent">@color/hue_7_accent</item>
+        <item name="colorMaterial100">@color/hue_7_material_100</item>
+        <item name="colorMaterial300">@color/hue_7_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue8">
+        <item name="colorPrimary">@color/hue_8_primary</item>
+        <item name="colorPrimaryDark">@color/hue_8_primary_dark</item>
+        <item name="colorAccent">@color/hue_8_accent</item>
+        <item name="colorMaterial100">@color/hue_8_material_100</item>
+        <item name="colorMaterial300">@color/hue_8_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue8">
+        <item name="colorPrimary">@color/hue_8_primary</item>
+        <item name="colorPrimaryDark">@color/hue_8_primary_dark</item>
+        <item name="colorAccent">@color/hue_8_accent</item>
+        <item name="colorMaterial100">@color/hue_8_material_100</item>
+        <item name="colorMaterial300">@color/hue_8_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue9">
+        <item name="colorPrimary">@color/hue_9_primary</item>
+        <item name="colorPrimaryDark">@color/hue_9_primary_dark</item>
+        <item name="colorAccent">@color/hue_9_accent</item>
+        <item name="colorMaterial100">@color/hue_9_material_100</item>
+        <item name="colorMaterial300">@color/hue_9_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue9">
+        <item name="colorPrimary">@color/hue_9_primary</item>
+        <item name="colorPrimaryDark">@color/hue_9_primary_dark</item>
+        <item name="colorAccent">@color/hue_9_accent</item>
+        <item name="colorMaterial100">@color/hue_9_material_100</item>
+        <item name="colorMaterial300">@color/hue_9_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue10">
+        <item name="colorPrimary">@color/hue_10_primary</item>
+        <item name="colorPrimaryDark">@color/hue_10_primary_dark</item>
+        <item name="colorAccent">@color/hue_10_accent</item>
+        <item name="colorMaterial100">@color/hue_10_material_100</item>
+        <item name="colorMaterial300">@color/hue_10_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue10">
+        <item name="colorPrimary">@color/hue_10_primary</item>
+        <item name="colorPrimaryDark">@color/hue_10_primary_dark</item>
+        <item name="colorAccent">@color/hue_10_accent</item>
+        <item name="colorMaterial100">@color/hue_10_material_100</item>
+        <item name="colorMaterial300">@color/hue_10_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue11">
+        <item name="colorPrimary">@color/hue_11_primary</item>
+        <item name="colorPrimaryDark">@color/hue_11_primary_dark</item>
+        <item name="colorAccent">@color/hue_11_accent</item>
+        <item name="colorMaterial100">@color/hue_11_material_100</item>
+        <item name="colorMaterial300">@color/hue_11_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue11">
+        <item name="colorPrimary">@color/hue_11_primary</item>
+        <item name="colorPrimaryDark">@color/hue_11_primary_dark</item>
+        <item name="colorAccent">@color/hue_11_accent</item>
+        <item name="colorMaterial100">@color/hue_11_material_100</item>
+        <item name="colorMaterial300">@color/hue_11_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue12">
+        <item name="colorPrimary">@color/hue_12_primary</item>
+        <item name="colorPrimaryDark">@color/hue_12_primary_dark</item>
+        <item name="colorAccent">@color/hue_12_accent</item>
+        <item name="colorMaterial100">@color/hue_12_material_100</item>
+        <item name="colorMaterial300">@color/hue_12_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue12">
+        <item name="colorPrimary">@color/hue_12_primary</item>
+        <item name="colorPrimaryDark">@color/hue_12_primary_dark</item>
+        <item name="colorAccent">@color/hue_12_accent</item>
+        <item name="colorMaterial100">@color/hue_12_material_100</item>
+        <item name="colorMaterial300">@color/hue_12_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue13">
+        <item name="colorPrimary">@color/hue_13_primary</item>
+        <item name="colorPrimaryDark">@color/hue_13_primary_dark</item>
+        <item name="colorAccent">@color/hue_13_accent</item>
+        <item name="colorMaterial100">@color/hue_13_material_100</item>
+        <item name="colorMaterial300">@color/hue_13_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue13">
+        <item name="colorPrimary">@color/hue_13_primary</item>
+        <item name="colorPrimaryDark">@color/hue_13_primary_dark</item>
+        <item name="colorAccent">@color/hue_13_accent</item>
+        <item name="colorMaterial100">@color/hue_13_material_100</item>
+        <item name="colorMaterial300">@color/hue_13_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue14">
+        <item name="colorPrimary">@color/hue_14_primary</item>
+        <item name="colorPrimaryDark">@color/hue_14_primary_dark</item>
+        <item name="colorAccent">@color/hue_14_accent</item>
+        <item name="colorMaterial100">@color/hue_14_material_100</item>
+        <item name="colorMaterial300">@color/hue_14_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue14">
+        <item name="colorPrimary">@color/hue_14_primary</item>
+        <item name="colorPrimaryDark">@color/hue_14_primary_dark</item>
+        <item name="colorAccent">@color/hue_14_accent</item>
+        <item name="colorMaterial100">@color/hue_14_material_100</item>
+        <item name="colorMaterial300">@color/hue_14_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue15">
+        <item name="colorPrimary">@color/hue_15_primary</item>
+        <item name="colorPrimaryDark">@color/hue_15_primary_dark</item>
+        <item name="colorAccent">@color/hue_15_accent</item>
+        <item name="colorMaterial100">@color/hue_15_material_100</item>
+        <item name="colorMaterial300">@color/hue_15_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue15">
+        <item name="colorPrimary">@color/hue_15_primary</item>
+        <item name="colorPrimaryDark">@color/hue_15_primary_dark</item>
+        <item name="colorAccent">@color/hue_15_accent</item>
+        <item name="colorMaterial100">@color/hue_15_material_100</item>
+        <item name="colorMaterial300">@color/hue_15_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue16">
+        <item name="colorPrimary">@color/hue_16_primary</item>
+        <item name="colorPrimaryDark">@color/hue_16_primary_dark</item>
+        <item name="colorAccent">@color/hue_16_accent</item>
+        <item name="colorMaterial100">@color/hue_16_material_100</item>
+        <item name="colorMaterial300">@color/hue_16_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue16">
+        <item name="colorPrimary">@color/hue_16_primary</item>
+        <item name="colorPrimaryDark">@color/hue_16_primary_dark</item>
+        <item name="colorAccent">@color/hue_16_accent</item>
+        <item name="colorMaterial100">@color/hue_16_material_100</item>
+        <item name="colorMaterial300">@color/hue_16_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue17">
+        <item name="colorPrimary">@color/hue_17_primary</item>
+        <item name="colorPrimaryDark">@color/hue_17_primary_dark</item>
+        <item name="colorAccent">@color/hue_17_accent</item>
+        <item name="colorMaterial100">@color/hue_17_material_100</item>
+        <item name="colorMaterial300">@color/hue_17_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue17">
+        <item name="colorPrimary">@color/hue_17_primary</item>
+        <item name="colorPrimaryDark">@color/hue_17_primary_dark</item>
+        <item name="colorAccent">@color/hue_17_accent</item>
+        <item name="colorMaterial100">@color/hue_17_material_100</item>
+        <item name="colorMaterial300">@color/hue_17_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue18">
+        <item name="colorPrimary">@color/hue_18_primary</item>
+        <item name="colorPrimaryDark">@color/hue_18_primary_dark</item>
+        <item name="colorAccent">@color/hue_18_accent</item>
+        <item name="colorMaterial100">@color/hue_18_material_100</item>
+        <item name="colorMaterial300">@color/hue_18_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue18">
+        <item name="colorPrimary">@color/hue_18_primary</item>
+        <item name="colorPrimaryDark">@color/hue_18_primary_dark</item>
+        <item name="colorAccent">@color/hue_18_accent</item>
+        <item name="colorMaterial100">@color/hue_18_material_100</item>
+        <item name="colorMaterial300">@color/hue_18_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue19">
+        <item name="colorPrimary">@color/hue_19_primary</item>
+        <item name="colorPrimaryDark">@color/hue_19_primary_dark</item>
+        <item name="colorAccent">@color/hue_19_accent</item>
+        <item name="colorMaterial100">@color/hue_19_material_100</item>
+        <item name="colorMaterial300">@color/hue_19_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue19">
+        <item name="colorPrimary">@color/hue_19_primary</item>
+        <item name="colorPrimaryDark">@color/hue_19_primary_dark</item>
+        <item name="colorAccent">@color/hue_19_accent</item>
+        <item name="colorMaterial100">@color/hue_19_material_100</item>
+        <item name="colorMaterial300">@color/hue_19_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue20">
+        <item name="colorPrimary">@color/hue_20_primary</item>
+        <item name="colorPrimaryDark">@color/hue_20_primary_dark</item>
+        <item name="colorAccent">@color/hue_20_accent</item>
+        <item name="colorMaterial100">@color/hue_20_material_100</item>
+        <item name="colorMaterial300">@color/hue_20_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue20">
+        <item name="colorPrimary">@color/hue_20_primary</item>
+        <item name="colorPrimaryDark">@color/hue_20_primary_dark</item>
+        <item name="colorAccent">@color/hue_20_accent</item>
+        <item name="colorMaterial100">@color/hue_20_material_100</item>
+        <item name="colorMaterial300">@color/hue_20_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue21">
+        <item name="colorPrimary">@color/hue_21_primary</item>
+        <item name="colorPrimaryDark">@color/hue_21_primary_dark</item>
+        <item name="colorAccent">@color/hue_21_accent</item>
+        <item name="colorMaterial100">@color/hue_21_material_100</item>
+        <item name="colorMaterial300">@color/hue_21_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue21">
+        <item name="colorPrimary">@color/hue_21_primary</item>
+        <item name="colorPrimaryDark">@color/hue_21_primary_dark</item>
+        <item name="colorAccent">@color/hue_21_accent</item>
+        <item name="colorMaterial100">@color/hue_21_material_100</item>
+        <item name="colorMaterial300">@color/hue_21_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue22">
+        <item name="colorPrimary">@color/hue_22_primary</item>
+        <item name="colorPrimaryDark">@color/hue_22_primary_dark</item>
+        <item name="colorAccent">@color/hue_22_accent</item>
+        <item name="colorMaterial100">@color/hue_22_material_100</item>
+        <item name="colorMaterial300">@color/hue_22_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue22">
+        <item name="colorPrimary">@color/hue_22_primary</item>
+        <item name="colorPrimaryDark">@color/hue_22_primary_dark</item>
+        <item name="colorAccent">@color/hue_22_accent</item>
+        <item name="colorMaterial100">@color/hue_22_material_100</item>
+        <item name="colorMaterial300">@color/hue_22_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Hue23">
+        <item name="colorPrimary">@color/hue_23_primary</item>
+        <item name="colorPrimaryDark">@color/hue_23_primary_dark</item>
+        <item name="colorAccent">@color/hue_23_accent</item>
+        <item name="colorMaterial100">@color/hue_23_material_100</item>
+        <item name="colorMaterial300">@color/hue_23_material_300</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Hue23">
+        <item name="colorPrimary">@color/hue_23_primary</item>
+        <item name="colorPrimaryDark">@color/hue_23_primary_dark</item>
+        <item name="colorAccent">@color/hue_23_accent</item>
+        <item name="colorMaterial100">@color/hue_23_material_100</item>
+        <item name="colorMaterial300">@color/hue_23_material_300</item>
+    </style>
+
+</resources>

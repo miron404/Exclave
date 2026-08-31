@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_custom">Custom colour</string>
+    <string name="theme_custom_message">A hex colour, snapped to the nearest hue of a restrained wheel.</string>
+    <string name="theme_custom_hint">#RRGGBB</string>
+    <string name="theme_custom_invalid">Not a colour</string>
+</resources>

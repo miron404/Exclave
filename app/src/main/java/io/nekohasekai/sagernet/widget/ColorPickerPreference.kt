@@ -22,10 +22,13 @@ package io.nekohasekai.sagernet.widget
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
@@ -42,8 +45,11 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.getColorAttr
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("RestrictedApi")
@@ -130,6 +136,16 @@ class ColorPickerPreference
                 }
                 addView(view)
             }
+            // The last swatch is not a colour of its own: it stands for whatever
+            // was last typed in, and opens the field to type another.
+            addView(getImageViewAtColor(
+                ContextCompat.getColor(context, Theme.hueColorRes(DataStore.appThemeHue)), 64, 0
+            ).apply {
+                setOnClickListener {
+                    dialog.dismiss()
+                    askForColor()
+                }
+            })
         }
 
         val scrollView = NestedScrollView(context).apply {
@@ -145,5 +161,57 @@ class ColorPickerPreference
             .setView(scrollView)
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+    }
+
+    /**
+     * Asks for a colour as hex and keeps the step of the hue wheel it falls on.
+     *
+     * Only the hue survives: how saturated or how light the colour was is not
+     * carried over, since the wheel is there to keep every choice inside one
+     * restrained range. A theme attribute also cannot hold a value computed at
+     * runtime, so the wheel is a set of resources and this picks one of them.
+     */
+    private fun askForColor() {
+        val field = EditText(context).apply {
+            setSingleLine()
+            hint = context.getString(R.string.theme_custom_hint)
+            setText(currentHex())
+            setSelection(text.length)
+        }
+        val frame = FrameLayout(context).apply {
+            setPadding(dp2px(24), dp2px(8), dp2px(24), 0)
+            addView(field)
+        }
+        val dialog = MaterialAlertDialogBuilder(context).setTitle(R.string.theme_custom)
+            .setMessage(R.string.theme_custom_message)
+            .setView(frame)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+        // Bound after the dialog is shown so that a value that does not parse
+        // can be reported on the field instead of closing over it.
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val color = parseColor(field.text.toString())
+            if (color == null) {
+                field.error = context.getString(R.string.theme_custom_invalid)
+                return@setOnClickListener
+            }
+            DataStore.appThemeHue = Theme.hueOf(color)
+            persistInt(Theme.CUSTOM)
+            dialog.dismiss()
+            callChangeListener(Theme.CUSTOM)
+        }
+    }
+
+    private fun currentHex(): String = String.format(
+        Locale.ROOT,
+        "#%06X",
+        0xFFFFFF and ContextCompat.getColor(context, Theme.hueColorRes(DataStore.appThemeHue))
+    )
+
+    private fun parseColor(input: String): Int? {
+        val text = input.trim().let { if (it.startsWith("#")) it else "#$it" }
+        if (text.length != 7 && text.length != 9) return null
+        return runCatching { Color.parseColor(text) }.getOrNull()
     }
 }

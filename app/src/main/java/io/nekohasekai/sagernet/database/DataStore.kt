@@ -131,6 +131,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     }
 
     var appTheme by configurationStore.int(Key.APP_THEME)
+    // The step of Theme's hue wheel the custom colour was snapped to.
+    var appThemeHue by configurationStore.int(Key.APP_THEME_HUE)
     var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME)
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+      Generated. A restrained hue wheel, twenty four steps of fifteen degrees,
+      for the custom colour a hex code is snapped to.
+
+      The tones are solved per hue for a contrast ratio rather than fixed in
+      HSL, because a fixed lightness is not perceptually even: yellow and blue
+      at the same lightness are nowhere near the same darkness. Primary sits at
+      5:1 against white, which every hue here clears, so the app bar carries its
+      white text everywhere on the wheel; primaryDark at 8.5:1; the accent at
+      the lightness where its contrast against a light and a dark background is
+      equal, since it is used as text on both. Saturation is held well below the
+      Material 500 level, which is the point of the set.
+
+      Regenerate rather than hand-edit; the ratios above are the source of truth.
+    -->
+    <!-- 0° -->
+    <color name="hue_0_primary">#B44F4F</color>
+    <color name="hue_0_primary_dark">#7F3636</color>
+    <color name="hue_0_accent">#C05A5A</color>
+    <color name="hue_0_material_100">#EDD9D9</color>
+    <color name="hue_0_material_300">#D5A3A3</color>
+    <!-- 15° -->
+    <color name="hue_1_primary">#A35D46</color>
+    <color name="hue_1_primary_dark">#714030</color>
+    <color name="hue_1_accent">#B76246</color>
+    <color name="hue_1_material_100">#EBDBD5</color>
+    <color name="hue_1_material_300">#D0A697</color>
+    <!-- 30° -->
+    <color name="hue_2_primary">#91673E</color>
+    <color name="hue_2_primary_dark">#64472B</color>
+    <color name="hue_2_accent">#A16F3D</color>
+    <color name="hue_2_material_100">#E8DBCF</color>
+    <color name="hue_2_material_300">#CAA988</color>
+    <!-- 45° -->
+    <color name="hue_3_primary">#806E37</color>
+    <color name="hue_3_primary_dark">#584B26</color>
+    <color name="hue_3_accent">#8D7736</color>
+    <color name="hue_3_material_100">#E5DDC8</color>
+    <color name="hue_3_material_300">#C1AD74</color>
+    <!-- 60° -->
+    <color name="hue_4_primary">#727231</color>
+    <color name="hue_4_primary_dark">#4E4E22</color>
+    <color name="hue_4_accent">#7D7D2F</color>
+    <color name="hue_4_material_100">#DFDFBE</color>
+    <color name="hue_4_material_300">#B4B457</color>
+    <!-- 75° -->
+    <color name="hue_5_primary">#667633</color>
+    <color name="hue_5_primary_dark">#465223</color>
+    <color name="hue_5_accent">#6D8131</color>
+    <color name="hue_5_material_100">#DAE2C2</color>
+    <color name="hue_5_material_300">#A2B760</color>
+    <!-- 90° -->
+    <color name="hue_6_primary">#577A34</color>
+    <color name="hue_6_primary_dark">#3C5324</color>
+    <color name="hue_6_accent">#5C8532</color>
+    <color name="hue_6_material_100">#D3E3C4</color>
+    <color name="hue_6_material_300">#92BB69</color>
+    <!-- 105° -->
+    <color name="hue_7_primary">#477B35</color>
+    <color name="hue_7_primary_dark">#315625</color>
+    <color name="hue_7_accent">#498834</color>
+    <color name="hue_7_material_100">#CEE4C7</color>
+    <color name="hue_7_material_300">#83BE6F</color>
+    <!-- 120° -->
+    <color name="hue_8_primary">#367F36</color>
+    <color name="hue_8_primary_dark">#255725</color>
+    <color name="hue_8_accent">#348A34</color>
+    <color name="hue_8_material_100">#C9E5C9</color>
+    <color name="hue_8_material_300">#74C174</color>
+    <!-- 135° -->
+    <color name="hue_9_primary">#367E48</color>
+    <color name="hue_9_primary_dark">#255731</color>
+    <color name="hue_9_accent">#348A4A</color>
+    <color name="hue_9_material_100">#C8E4CF</color>
+    <color name="hue_9_material_300">#72C085</color>
+    <!-- 150° -->
+    <color name="hue_10_primary">#357C59</color>
+    <color name="hue_10_primary_dark">#25563D</color>
+    <color name="hue_10_accent">#34885E</color>
+    <color name="hue_10_material_100">#C8E4D6</color>
+    <color name="hue_10_material_300">#6FBF97</color>
+    <!-- 165° -->
+    <color name="hue_11_primary">#357B6A</color>
+    <color name="hue_11_primary_dark">#245549</color>
+    <color name="hue_11_accent">#338772</color>
+    <color name="hue_11_material_100">#C7E4DC</color>
+    <color name="hue_11_material_300">#6DBEA9</color>
+    <!-- 180° -->
+    <color name="hue_12_primary">#347A7A</color>
+    <color name="hue_12_primary_dark">#245353</color>
+    <color name="hue_12_accent">#338585</color>
+    <color name="hue_12_material_100">#C6E4E4</color>
+    <color name="hue_12_material_300">#6BBDBD</color>
+    <!-- 195° -->
+    <color name="hue_13_primary">#3C778B</color>
+    <color name="hue_13_primary_dark">#295260</color>
+    <color name="hue_13_accent">#3B829A</color>
+    <color name="hue_13_material_100">#CEE1E8</color>
+    <color name="hue_13_material_300">#83B7C8</color>
+    <!-- 210° -->
+    <color name="hue_14_primary">#4572A0</color>
+    <color name="hue_14_primary_dark">#2F4F6F</color>
+    <color name="hue_14_accent">#457DB5</color>
+    <color name="hue_14_material_100">#D4E0EB</color>
+    <color name="hue_14_material_300">#95B2CF</color>
+    <!-- 225° -->
+    <color name="hue_15_primary">#546DB6</color>
+    <color name="hue_15_primary_dark">#384B82</color>
+    <color name="hue_15_accent">#5D76C2</color>
+    <color name="hue_15_material_100">#D9DDEC</color>
+    <color name="hue_15_material_300">#A2AED5</color>
+    <!-- 240° -->
+    <color name="hue_16_primary">#6565BD</color>
+    <color name="hue_16_primary_dark">#424299</color>
+    <color name="hue_16_accent">#7070C9</color>
+    <color name="hue_16_material_100">#DDDDEE</color>
+    <color name="hue_16_material_300">#ABABD9</color>
+    <!-- 255° -->
+    <color name="hue_17_primary">#7761BB</color>
+    <color name="hue_17_primary_dark">#533E91</color>
+    <color name="hue_17_accent">#826BC7</color>
+    <color name="hue_17_material_100">#E0DCEE</color>
+    <color name="hue_17_material_300">#B4A8D8</color>
+    <!-- 270° -->
+    <color name="hue_18_primary">#8959B8</color>
+    <color name="hue_18_primary_dark">#613A88</color>
+    <color name="hue_18_accent">#9463C4</color>
+    <color name="hue_18_material_100">#E4DAED</color>
+    <color name="hue_18_material_300">#BEA5D7</color>
+    <!-- 285° -->
+    <color name="hue_19_primary">#9B4FB4</color>
+    <color name="hue_19_primary_dark">#6C367F</color>
+    <color name="hue_19_accent">#A75AC0</color>
+    <color name="hue_19_material_100">#E8D9EC</color>
+    <color name="hue_19_material_300">#C8A2D5</color>
+    <!-- 300° -->
+    <color name="hue_20_primary">#A948A9</color>
+    <color name="hue_20_primary_dark">#763276</color>
+    <color name="hue_20_accent">#BB4CBB</color>
+    <color name="hue_20_material_100">#ECD8EC</color>
+    <color name="hue_20_material_300">#D39ED3</color>
+    <!-- 315° -->
+    <color name="hue_21_primary">#AD4A95</color>
+    <color name="hue_21_primary_dark">#783367</color>
+    <color name="hue_21_accent">#BD51A2</color>
+    <color name="hue_21_material_100">#ECD9E7</color>
+    <color name="hue_21_material_300">#D49FC6</color>
+    <!-- 330° -->
+    <color name="hue_22_primary">#B04C7E</color>
+    <color name="hue_22_primary_dark">#7A3457</color>
+    <color name="hue_22_accent">#BE558A</color>
+    <color name="hue_22_material_100">#ECD9E2</color>
+    <color name="hue_22_material_300">#D4A0BA</color>
+    <!-- 345° -->
+    <color name="hue_23_primary">#B34E67</color>
+    <color name="hue_23_primary_dark">#7C3547</color>
+    <color name="hue_23_accent">#BF5871</color>
+    <color name="hue_23_material_100">#ECD9DE</color>
+    <color name="hue_23_material_300">#D5A2AE</color>
+
+</resources>
