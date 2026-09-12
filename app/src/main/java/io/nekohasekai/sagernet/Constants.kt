@@ -258,6 +258,7 @@ object Key {
 
     const val SERVER_SNELL_OBFS_MODE = "serverSnellObfsMode"
     const val SERVER_SNELL_OBFS_HOST = "serverSnellObfsHost"
+    const val SERVER_SNELL_OBFS_URI = "serverSnellObfsUri"
     const val SERVER_SNELL_MODE = "serverSnellMode"
 
     const val SERVER_MASQUE_MODE = "serverMasqueMode"

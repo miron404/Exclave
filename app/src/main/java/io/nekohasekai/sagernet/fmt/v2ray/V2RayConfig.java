@@ -1000,6 +1000,7 @@ public class V2RayConfig {
         public String userKey;
         public String obfsMode;
         public String obfsHost;
+        public String obfsURI;
         public Integer version;
         public Boolean reuse;
         public String mode;

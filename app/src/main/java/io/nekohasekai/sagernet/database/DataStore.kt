@@ -367,6 +367,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverSnellUserKey by profileCacheStore.string(Key.SERVER_SNELL_USER_KEY)
     var serverSnellObfsMode by profileCacheStore.string(Key.SERVER_SNELL_OBFS_MODE)
     var serverSnellObfsHost by profileCacheStore.string(Key.SERVER_SNELL_OBFS_HOST)
+    var serverSnellObfsUri by profileCacheStore.string(Key.SERVER_SNELL_OBFS_URI)
     var serverSnellMode by profileCacheStore.string(Key.SERVER_SNELL_MODE)
 
     var serverMasqueMode by profileCacheStore.string(Key.SERVER_MASQUE_MODE)
