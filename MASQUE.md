@@ -39,10 +39,29 @@ instead and is required normally.
 ## The app side
 
 Wired the way any protocol is here; `git show 3be5bc44` (Snell) is the template.
-`MasqueBean` holds the device material, which is configuration only: enrolling a
-device is out of scope, values come from an existing usque `config.json`.
-Pasting that file, or a `masque://` link (the same document, base64url), creates
-a profile.
+`MasqueBean` holds the device material. Pasting a usque `config.json`, or a
+`masque://` link (the same document, base64url), creates a profile.
+
+A profile can also be filled in from scratch: "Register a device" in the profile
+editor enrolls one with Cloudflare. `MasqueEnrollment.kt` repeats what usque's
+`register` command does, which is two calls to an undocumented API:
+
+| | |
+| --- | --- |
+| `POST /v0a4471/reg` | registers a device, with a throwaway WireGuard key because that is the only kind registration takes, and answers with an id and an access token |
+| `PATCH /v0a4471/reg/{id}` | amends it with the P-256 key actually used, and answers with the endpoint, its public key and the addresses assigned to this device |
+
+The awkward part is the key. Cloudflare is handed PKIX, which is what
+`PublicKey.getEncoded()` already is, but the outbound and usque both read the
+private key with Go's `x509.ParseECPrivateKey`, which wants RFC 5915. Android
+hands out PKCS#8, and the structure nested inside it leaves the curve out, so
+unwrapping it is not enough: `sec1PrivateKey` re-encodes the key with the curve
+named. The result is byte for byte what `x509.MarshalECPrivateKey` produces,
+which is what keeps an exported profile readable by usque.
+
+The API is reached through the tunnel when one is running, like every other
+network access in the app, so a device can be enrolled from a network where
+`api.cloudflareclient.com` is not reachable.
 
 ## The outbound
 

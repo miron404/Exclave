@@ -21,4 +21,10 @@
     <string name="masque_initial_packet_size_sum">0 keeps path MTU discovery enabled.</string>
     <string name="masque_http2_ping_period">Liveness check (s)</string>
     <string name="masque_http2_ping_period_sum">Ping the connection once it has received nothing for this long, and drop it if the ping goes unanswered. 0 leaves it unchecked, which is fine on a direct path; set it when the tunnel runs through another proxy.</string>
+    <string name="masque_enroll">Register a device</string>
+    <string name="masque_enroll_sum">Enrol a new WARP device with Cloudflare and fill this profile in.</string>
+    <string name="masque_enroll_message">A new device will be registered with Cloudflare, and the key, endpoint and addresses of this profile replaced with the ones it hands out. Continuing accepts Cloudflare\'s Terms of Service.</string>
+    <string name="masque_enroll_name">Device name</string>
+    <string name="masque_enroll_running">Registering…</string>
+    <string name="masque_enroll_done">Registered. This device is %s inside the tunnel.</string>
 </resources>
