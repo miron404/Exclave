@@ -322,6 +322,7 @@
         <item>@string/disable</item>
         <item>500ms</item>
         <item>1s</item>
+        <item>2s</item>
         <item>3s</item>
         <item>10s</item>
     </string-array>
@@ -330,6 +331,7 @@
         <item>0</item>
         <item>500</item>
         <item>1000</item>
+        <item>2000</item>
         <item>3000</item>
         <item>10000</item>
     </string-array>
