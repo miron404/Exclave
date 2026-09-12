@@ -42,9 +42,10 @@ Wired the way any protocol is here; `git show 3be5bc44` (Snell) is the template.
 `MasqueBean` holds the device material. Pasting a usque `config.json`, or a
 `masque://` link (the same document, base64url), creates a profile.
 
-A profile can also be filled in from scratch: "Register a device" in the profile
-editor enrolls one with Cloudflare. `MasqueEnrollment.kt` repeats what usque's
-`register` command does, which is two calls to an undocumented API:
+A profile can also be made from scratch: "Cloudflare WARP" in the tools tab
+registers a device and adds the profile. `fmt/warp/WarpEnrollment.kt` repeats
+what usque's `register` command does, which is two calls to an undocumented
+API:
 
 | | |
 | --- | --- |
@@ -59,8 +60,19 @@ unwrapping it is not enough: `sec1PrivateKey` re-encodes the key with the curve
 named. The result is byte for byte what `x509.MarshalECPrivateKey` produces,
 which is what keeps an exported profile readable by usque.
 
+The same file registers a WireGuard device, from
+[bash-warp-generator](https://github.com/ImMALWARE/bash-warp-generator). It is
+the same two calls, but that reference was written against an older API version
+which wraps its answers in `result`, and there the key that matters goes with
+the registration itself, since WireGuard is what the API takes by default. Each
+flow is kept at the version its reference used rather than merged onto one:
+the request bodies, the timestamp format and the answer shape all differ, and
+none of it can be tested without registering a real device. The X25519 key comes
+from BouncyCastle, which is already a dependency and, unlike the platform, has
+carried X25519 for far longer than this app's minimum API level.
+
 The API is reached through the tunnel when one is running, like every other
-network access in the app, so a device can be enrolled from a network where
+network access in the app, so a device can be registered from a network where
 `api.cloudflareclient.com` is not reachable.
 
 ## The outbound

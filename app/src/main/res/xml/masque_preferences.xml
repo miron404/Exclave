@@ -8,13 +8,6 @@
 
     <PreferenceCategory app:title="@string/proxy_cat">
 
-        <Preference
-            app:icon="@drawable/ic_file_cloud_queue"
-            app:key="masqueEnroll"
-            app:persistent="false"
-            app:singleLineTitle="false"
-            app:summary="@string/masque_enroll_sum"
-            app:title="@string/masque_enroll" />
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
             app:key="serverAddress"

@@ -19,13 +19,23 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import androidx.annotation.StringRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.databinding.LayoutNetworkBinding
+import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.warp.enrollMasqueDevice
+import io.nekohasekai.sagernet.fmt.warp.enrollWireGuardDevice
+import io.nekohasekai.sagernet.fmt.warp.warpAddresses
 import io.nekohasekai.sagernet.ktx.*
 
 class NetworkFragment : NamedFragment(R.layout.layout_network) {
@@ -53,6 +63,79 @@ class NetworkFragment : NamedFragment(R.layout.layout_network) {
             startActivity(Intent(requireContext(), ProbeCertActivity::class.java))
         }
 
+        val warpButtons = listOf(binding.generateWarpMasque, binding.generateWarpWireGuard)
+        binding.generateWarpMasque.setOnClickListener { clicked ->
+            askToRegister(warpButtons, clicked as Button, R.string.warp_profile_masque) {
+                enrollMasqueDevice(Build.MODEL)
+            }
+        }
+        binding.generateWarpWireGuard.setOnClickListener { clicked ->
+            askToRegister(warpButtons, clicked as Button, R.string.warp_profile_wireguard) {
+                enrollWireGuardDevice()
+            }
+        }
+
+    }
+
+    /**
+     * Registering creates an account with Cloudflare, so it is confirmed first
+     * and the dialog is where their terms are accepted.
+     */
+    private fun askToRegister(
+        buttons: List<Button>,
+        clicked: Button,
+        @StringRes profileName: Int,
+        enroll: () -> AbstractBean,
+    ) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.warp_generate)
+            .setMessage(R.string.warp_message)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                register(buttons, clicked, getString(profileName), enroll)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun register(
+        buttons: List<Button>,
+        clicked: Button,
+        profileName: String,
+        enroll: () -> AbstractBean,
+    ) {
+        val label = clicked.text
+        for (button in buttons) {
+            button.isEnabled = false
+        }
+        clicked.setText(R.string.warp_running)
+        runOnDefaultDispatcher {
+            val result = runCatching {
+                enroll().also { bean ->
+                    bean.name = profileName
+                    ProfileManager.createProfile(DataStore.selectedGroupForImport(), bean)
+                }
+            }
+            onMainDispatcher {
+                if (!isAdded) return@onMainDispatcher
+                for (button in buttons) {
+                    button.isEnabled = true
+                }
+                clicked.text = label
+                result.onSuccess { bean ->
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.warp_generate)
+                        .setMessage(getString(R.string.warp_done, bean.warpAddresses().replace("\n", ", ")))
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                }.onFailure { error ->
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.error_title)
+                        .setMessage(error.readableMessage)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                }
+            }
+        }
     }
 
 }

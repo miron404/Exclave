@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The strings this fork adds for registering a Cloudflare WARP device. They live
+  apart from strings.xml so that upstream's translation traffic, which rewrites
+  that file wholesale, never collides with them.
+-->
+<resources>
+    <string name="warp_generate">Cloudflare WARP</string>
+    <string name="warp_generate_summary">Register a new device with Cloudflare and add it as a profile. MASQUE carries IP packets over QUIC; WireGuard is the transport the official client has used for longer.</string>
+    <string name="warp_masque" translatable="false">MASQUE</string>
+    <string name="warp_wireguard" translatable="false">WireGuard</string>
+    <string name="warp_message">A new device will be registered with Cloudflare and added as a profile. Continuing accepts Cloudflare\'s Terms of Service.</string>
+    <string name="warp_running">Registering…</string>
+    <string name="warp_done">Registered. This device is %s inside the tunnel.</string>
+    <string name="warp_profile_masque" translatable="false">WARP MASQUE</string>
+    <string name="warp_profile_wireguard" translatable="false">WARP WireGuard</string>
+</resources>
