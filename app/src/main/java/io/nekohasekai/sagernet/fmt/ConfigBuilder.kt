@@ -1817,6 +1817,9 @@ fun buildV2RayConfig(
                                         if (bean.initialPacketSize > 0) {
                                             initialPacketSize = bean.initialPacketSize
                                         }
+                                        if (bean.http2PingPeriod > 0) {
+                                            http2PingPeriod = bean.http2PingPeriod
+                                        }
                                     })
                                 // The tunnel dials on its own network stack, which needs
                                 // an address rather than a name.

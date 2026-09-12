@@ -102,6 +102,7 @@ fun parseMasqueConfigJson(text: String): MasqueBean {
         json.getInt("mtu")?.takeIf { it > 0 }?.also { mtu = it }
         json.getInt("keepalive_period")?.takeIf { it >= 0 }?.also { keepalivePeriod = it }
         json.getInt("initial_packet_size")?.takeIf { it in 0..65535 }?.also { initialPacketSize = it }
+        json.getInt("http2_ping_period")?.takeIf { it >= 0 }?.also { http2PingPeriod = it }
         json.getBoolean("allow_insecure")?.also { allowInsecure = it }
         if (!allowInsecure && endpointPublicKey.isEmpty()) {
             error("missing endpoint public key")
@@ -162,6 +163,9 @@ fun MasqueBean.toConfigJson(): JsonObject = JsonObject().apply {
     }
     if (initialPacketSize != 0) {
         addProperty("initial_packet_size", initialPacketSize)
+    }
+    if (http2PingPeriod != 0) {
+        addProperty("http2_ping_period", http2PingPeriod)
     }
     if (allowInsecure) {
         addProperty("allow_insecure", true)

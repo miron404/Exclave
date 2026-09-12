@@ -13,7 +13,7 @@
  * GNU General Public License for more details.                               *
  *                                                                            *
  * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <https://www.gnu.org/licenses/>.      *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  *                                                                            *
  ******************************************************************************/
 
@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -47,6 +48,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         DataStore.serverMTU = mtu
         DataStore.serverMasqueKeepalivePeriod = keepalivePeriod
         DataStore.serverMasqueInitialPacketSize = initialPacketSize
+        DataStore.serverMasqueHTTP2PingPeriod = http2PingPeriod
         DataStore.serverAllowInsecure = allowInsecure
     }
 
@@ -63,6 +65,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         mtu = DataStore.serverMTU
         keepalivePeriod = DataStore.serverMasqueKeepalivePeriod
         initialPacketSize = DataStore.serverMasqueInitialPacketSize
+        http2PingPeriod = DataStore.serverMasqueHTTP2PingPeriod
         allowInsecure = DataStore.serverAllowInsecure
     }
 
@@ -87,14 +90,31 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         findPreference<EditTextPreference>(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
+        findPreference<EditTextPreference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
 
-        // The HTTP/2 endpoint is a different address than the QUIC one, so it is
-        // only worth showing once that transport is selected.
+        // Every transport setting below belongs to exactly one of the two: the
+        // keepalive and the initial packet size only ever reach quic-go, the
+        // HTTP/2 endpoint and its liveness check only the HTTP/2 transport.
+        // Showing the other set would offer settings that quietly do nothing.
         val modePreference = findPreference<ListPreference>(Key.SERVER_MASQUE_MODE)!!
-        val http2AddressPreference = findPreference<EditTextPreference>(Key.SERVER_MASQUE_HTTP2_ADDRESS)!!
-        http2AddressPreference.isVisible = modePreference.value == MasqueBean.MODE_HTTP2
+        val quicOnly = listOf(
+            findPreference<Preference>(Key.SERVER_MASQUE_KEEPALIVE_PERIOD)!!,
+            findPreference<Preference>(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)!!,
+        )
+        val http2Only = listOf(
+            findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_ADDRESS)!!,
+            findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!,
+        )
+        fun showModeOf(value: Any?) {
+            val http2 = value == MasqueBean.MODE_HTTP2
+            for (preference in quicOnly) preference.isVisible = !http2
+            for (preference in http2Only) preference.isVisible = http2
+        }
+        showModeOf(modePreference.value)
         modePreference.setOnPreferenceChangeListener { _, newValue ->
-            http2AddressPreference.isVisible = newValue == MasqueBean.MODE_HTTP2
+            showModeOf(newValue)
             true
         }
     }

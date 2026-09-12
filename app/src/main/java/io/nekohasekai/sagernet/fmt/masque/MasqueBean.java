@@ -60,6 +60,11 @@ public class MasqueBean extends AbstractBean {
     public Integer mtu;
     public Integer keepalivePeriod;
     public Integer initialPacketSize;
+    /**
+     * Seconds the HTTP/2 connection may receive nothing before it is pinged.
+     * 0 leaves it unchecked. QUIC uses {@link #keepalivePeriod} instead.
+     */
+    public Integer http2PingPeriod;
     public Boolean allowInsecure;
 
     @Override
@@ -76,13 +81,14 @@ public class MasqueBean extends AbstractBean {
         if (mtu == null) mtu = 1280;
         if (keepalivePeriod == null) keepalivePeriod = 30;
         if (initialPacketSize == null) initialPacketSize = 0;
+        if (http2PingPeriod == null) http2PingPeriod = 0;
         if (allowInsecure == null) allowInsecure = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
         super.serialize(output);
-        output.writeInt(0);
+        output.writeInt(1);
         output.writeString(http2Address);
         output.writeString(privateKey);
         output.writeString(endpointPublicKey);
@@ -93,6 +99,7 @@ public class MasqueBean extends AbstractBean {
         output.writeInt(keepalivePeriod);
         output.writeInt(initialPacketSize);
         output.writeBoolean(allowInsecure);
+        output.writeInt(http2PingPeriod);
     }
 
     @Override
@@ -109,6 +116,9 @@ public class MasqueBean extends AbstractBean {
         keepalivePeriod = input.readInt();
         initialPacketSize = input.readInt();
         allowInsecure = input.readBoolean();
+        if (version >= 1) {
+            http2PingPeriod = input.readInt();
+        }
     }
 
     @Override

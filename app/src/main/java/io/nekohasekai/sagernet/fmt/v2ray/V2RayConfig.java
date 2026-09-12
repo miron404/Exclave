@@ -1062,6 +1062,7 @@ public class V2RayConfig {
         public Boolean allowInsecure;
         public Integer keepalivePeriod;
         public Integer initialPacketSize;
+        public Integer http2PingPeriod;
         public String domainStrategy;
 
     }

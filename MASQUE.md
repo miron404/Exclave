@@ -133,6 +133,24 @@ off, which is usque's meaning of the field. quic-go clamps it to 1452, so any
 value above that is the same as 1452. Leave it at 0 unless you want to skip the
 climb on a network you know: pinned, there is nothing to fall back to.
 
+## Each transport has its own settings
+
+`keepalive_period` and `initial_packet_size` reach quic-go and nothing else;
+`http2_ping_period` reaches `http2.Transport.ReadIdleTimeout` and nothing else.
+The profile editor shows one set or the other, following the selected
+transport, so that none of them is a knob that quietly does nothing.
+
+The liveness check is off by default, and that is deliberate. Over QUIC a dead
+path is found by the keepalive, because the idle timeout then expires and fails
+the connection. HTTP/2 has no such clock: the tunnel request stays open for the
+life of the session, so a TCP path that dies silently parks both pumps on a
+socket that will never deliver again, with no error to end them and nothing to
+make the supervisor redial. A ping is what produces that error. It was measured
+against rather than overlooked, though: the mode holds a connection across a
+night of idling without one, and a ping frequent enough to be useful costs the
+radio wakeups this mode otherwise avoids. Worth turning on when the tunnel runs
+through another proxy, which can drop the session without telling either end.
+
 ## Updating from upstream
 
 **Exclave.** An ordinary merge. The app diff is confined to the files any
@@ -144,6 +162,14 @@ are in shared files, so conflicts are unlikely: the entry in the outbound loader
 map in `infra/conf/v4/v2ray.go` and the import in `main/distro/all/all.go`.
 Everything else is `proxy/masque`, `infra/conf/v4/masque.go`, and the netstack
 close fix. Then move the submodule and `go mod tidy` in `library/core`.
+
+What does conflict, every time, is `go.sum` on both sides, and
+`library/core/go.mod` in the app. Take upstream's dependency versions, keep the
+two lines MASQUE adds (`connect-ip-go` and `httpsfv`), and let `go mod tidy`
+settle the rest. Resolving `library/core/go.mod` by taking one side wholesale
+drops the filesystem replace at the end of the file, and `tidy` then quietly
+resolves against the upstream core instead of the submodule; put it back before
+running tidy.
 
 Watch for a quic-go bump. 0.60 to 0.61 replaced `http3.ParseCapsule` with a
 stateful `http3.CapsuleParser`, which is why connect-ip-go is forked at all, and
@@ -193,11 +219,4 @@ The Kotlin side cannot; CI is the first thing that compiles it.
 - A url test starts an instance per proxy, and each builds its own tunnel to
   Cloudflare. That is how url test works, not something this outbound decides,
   but it makes the measurements pessimistic.
-- The HTTP/2 mode has no liveness check: `keepalive_period` reaches quic-go
-  only, and `http2.Transport.ReadIdleTimeout` is left at zero. A TCP path that
-  dies silently would park both pumps on a socket that never delivers again,
-  with nothing to fail and so nothing to make the supervisor redial. Measured
-  against, rather than overlooked: the mode holds a connection across a night
-  idle without one, and a ping frequent enough to be useful would cost the
-  wakeups this mode does not otherwise need.
 - Profile strings are English only.

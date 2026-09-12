@@ -69,6 +69,12 @@
             app:key="serverMasqueInitialPacketSize"
             app:summary="@string/masque_initial_packet_size_sum"
             app:title="@string/masque_initial_packet_size" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_cached"
+            app:key="serverMasqueHTTP2PingPeriod"
+            app:singleLineTitle="false"
+            app:summary="@string/masque_http2_ping_period_sum"
+            app:title="@string/masque_http2_ping_period" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverAllowInsecure"
