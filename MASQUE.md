@@ -138,6 +138,36 @@ holds the relationship.
 outright, so the tunnel drops IPv6 addresses when it is resized below it, and
 says so. A profile MTU under 1280 costs IPv6 the same way.
 
+**A migrated connection keeps every socket it has used.** quic-go leaves the
+connection registered on each transport it ran on, and closing a transport, or
+the socket under it, which makes its reader fail and close it, destroys every
+connection registered there. So the old socket is held until the session ends,
+and a session moves at most `maxMigrations` times before a network change
+redials it instead.
+
+## When the network changes
+
+Android reports a change of default network or of its addresses through
+`InterfaceUpdate`, whenever "interrupt reused connections" is on, which is the
+default. The tunnel used to be dropped whole, stack included, so every
+connection in it was reset. Now the stack stays, and with it the addresses and
+every flow on them:
+
+- over QUIC, the connection is moved onto a socket opened on the new network
+  (`AddPath`, `Probe`, `Switch`). No handshake and no new CONNECT-IP request,
+  just a few PATH_CHALLENGE frames, and quic-go restarts congestion control and
+  MTU discovery for the new path;
+- if that cannot be done (HTTP/2, a chained outbound, a refused or unanswered
+  probe, too many moves), the session is dropped and redialed the usual lazy
+  way, on the first packet something wants to send, so an idle tunnel spends
+  nothing on it;
+- only a tunnel whose MTU was lowered for the old path is rebuilt, because a
+  stack's link MTU is fixed when it is made.
+
+Whether an inner flow survives a redial depends on Cloudflare keeping the
+device's egress mapping across sessions, which could not be checked here. A
+migration keeps the session itself, so nothing there depends on it.
+
 ## How the MTU works
 
 Three values, and only the outermost is discovered:
