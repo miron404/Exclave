@@ -11,3 +11,9 @@ local.properties
 jniLibs/
 go.work
 go.work.sum
+
+# Build outputs that a local release build leaves at the root
+/*.apk
+/baselineProfiles/
+/output-metadata.json
+__pycache__/

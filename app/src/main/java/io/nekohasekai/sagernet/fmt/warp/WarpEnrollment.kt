@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.fmt.masque.MasqueBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.getArray
+import io.nekohasekai.sagernet.ktx.getBoolean
 import io.nekohasekai.sagernet.ktx.getObject
 import io.nekohasekai.sagernet.ktx.getString
 import io.nekohasekai.sagernet.ktx.parseJson
@@ -233,7 +234,7 @@ private fun callAPI(
     token: String? = null,
     clientVersion: String? = null,
 ): JsonObject {
-    val response = Libexclavecore.newHttpClient().apply {
+    val request = Libexclavecore.newHttpClient().apply {
         if (SagerNet.started && DataStore.startedProfile > 0) {
             useUDS(SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc.sock")
         }
@@ -249,10 +250,51 @@ private fun callAPI(
             setHeader("Authorization", "Bearer $token")
         }
         setContentString(body.toString())
-    }.execute()
-    return runCatching { parseJson(response.contentString) }.getOrNull()
+    }
+    val response = try {
+        request.execute()
+    } catch (e: Exception) {
+        throw apiFailure(e)
+    }
+    val json = runCatching { parseJson(response.contentString) }.getOrNull()
         ?.takeIf { it.isJsonObject }?.asJsonObject
         ?: error("the enrollment API answered with something other than JSON")
+    // Both API versions can refuse a request with a 200 and say so in the body.
+    if (json.getBoolean("success") == false) {
+        error(json.apiErrors() ?: "the enrollment API refused the request")
+    }
+    return json
+}
+
+/**
+ * Turns a failed call into something worth showing. The core fails anything but
+ * a 200 as "HTTP <status>: <body>", and the body is Cloudflare's JSON, whose
+ * error messages say why far better than the status does.
+ */
+private fun apiFailure(e: Exception): Exception {
+    val message = e.message ?: return e
+    val status = message.substringBefore(": ", "").takeIf { it.startsWith("HTTP ") } ?: return e
+    val body = message.substringAfter(": ")
+    val reason = runCatching { parseJson(body) }.getOrNull()
+        ?.takeIf { it.isJsonObject }?.asJsonObject?.apiErrors()
+    return when {
+        // Registrations are limited per address, and the answer to that is
+        // often not JSON at all.
+        status.startsWith("HTTP 429") -> IllegalStateException(
+            "$status: Cloudflare limits how often a device can be registered from one address, " +
+                "try again later${reason?.let { " ($it)" } ?: ""}"
+        )
+        reason != null -> IllegalStateException("$status: $reason")
+        else -> e
+    }
+}
+
+/** The messages of Cloudflare's `errors` array, or null when it carries none. */
+private fun JsonObject.apiErrors(): String? {
+    val errors = runCatching { getArray("errors") }.getOrNull() ?: return null
+    return errors.mapNotNull { it.getString("message")?.takeIf { message -> message.isNotBlank() } }
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString("; ")
 }
 
 private fun generateDeviceKey(): KeyPair = KeyPairGenerator.getInstance("EC").apply {
