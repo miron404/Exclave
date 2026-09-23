@@ -202,6 +202,11 @@ drops the filesystem replace at the end of the file, and `tidy` then quietly
 resolves against the upstream core instead of the submodule; put it back before
 running tidy.
 
+Watch the build tags too. Upstream builds with `http2legacy`, which picks the
+HTTP/2 client `golang.org/x/net/http2` carries, and the HTTP/2 mode runs on
+it. The core's `masque.yml` workflow tests with the same tags, so keep the two
+in step when upstream changes them.
+
 Watch for a quic-go bump. 0.60 to 0.61 replaced `http3.ParseCapsule` with a
 stateful `http3.CapsuleParser`, which is why connect-ip-go is forked at all, and
 the datagram and path MTU behaviour described above lives there too.

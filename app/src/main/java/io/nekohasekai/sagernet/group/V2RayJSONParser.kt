@@ -130,19 +130,19 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         }
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
@@ -163,7 +163,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         // Xray verifyPeerCertByName
                                     v2rayBean.serverNameToVerify = it.joinToString("\n")
                                 }
-                                tlsSettings.getStringArray("serverNameToVerify")?.also {
+                                tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.serverNameToVerify = it.joinToString("\n")
                                 }
                                 if (v2rayBean is VLESSBean || v2rayBean is TrojanBean || v2rayBean is VMessBean) {
@@ -351,13 +351,13 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     try {
                                         // RPRX's smart-assed invention. This of course will break under some conditions.
                                         val u = Libexclavecore.parseURL(path)
-                                        u.queryParameter("ed")?.also { ed ->
+                                        u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.also { ed ->
                                             u.deleteQueryParameter("ed")
                                             v2rayBean.path = u.string
-                                            ed.toIntOrNull()?.also {
+                                            ed.toIntOrNull()?.takeIf { it > 0 }?.also {
                                                 v2rayBean.maxEarlyData = it
+                                                v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                                             }
-                                            v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                                         }
                                     } catch (_: Exception) {}
                                 }
@@ -426,7 +426,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     try {
                                         // RPRX's smart-assed invention. This of course will break under some conditions.
                                         val u = Libexclavecore.parseURL(it)
-                                        u.queryParameter("ed")?.also {
+                                        u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.also {
                                             u.deleteQueryParameter("ed")
                                             v2rayBean.path = u.string
                                         }
@@ -1160,25 +1160,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         }
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                                     hysteria2Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                                     hysteria2Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
-                                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                                     hysteria2Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
-                                tlsSettings.getStringArray("serverNameToVerify")?.also {
+                                tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                                     hysteria2Bean.serverNameToVerify = it.joinToString("\n")
                                 }
                                 tlsSettings.getString("echDohServer")?.also {
@@ -1327,25 +1327,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                         }
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                     tuic5Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         tuic5Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                     tuic5Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         tuic5Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                     tuic5Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         tuic5Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("serverNameToVerify")?.also {
+                tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                     tuic5Bean.serverNameToVerify = it.joinToString("\n")
                 }
                 /*tlsSettings.getObject("ech")?.also {
@@ -1421,25 +1421,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                         }
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                     http3Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         http3Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                     http3Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         http3Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                     http3Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         http3Bean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("serverNameToVerify")?.also {
+                tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                     http3Bean.serverNameToVerify = it.joinToString("\n")
                 }
                 /*tlsSettings.getObject("ech")?.also {
@@ -1521,25 +1521,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     }
                                 }
                             }
-                            tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                            tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                                 anytlsBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
-                            tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                            tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                                 anytlsBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
-                            tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                            tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                                 anytlsBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
-                            tlsSettings.getStringArray("serverNameToVerify")?.also {
+                            tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                                 anytlsBean.serverNameToVerify = it.joinToString("\n")
                             }
                             /*tlsSettings.getObject("ech")?.also {
@@ -1638,25 +1638,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                         }
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                     juicityBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                     // match Juicity's behavior
                     // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
                     juicityBean.allowInsecure = true
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                     juicityBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         juicityBean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                     juicityBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                         juicityBean.allowInsecure = allowInsecure
                     }
                 }
-                tlsSettings.getStringArray("serverNameToVerify")?.also {
+                tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                     juicityBean.serverNameToVerify = it.joinToString("\n")
                 }
                 /*tlsSettings.getObject("ech")?.also {
@@ -2125,25 +2125,25 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             }
                         }
                     }
-                    tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.also {
+                    tlsSettings.getStringArray("pinnedPeerCertificateChainSha256")?.takeIf { it.isNotEmpty() }?.also {
                         trusttunnelBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             trusttunnelBean.allowInsecure = allowInsecure
                         }
                     }
-                    tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.also {
+                    tlsSettings.getStringArray("pinnedPeerCertificatePublicKeySha256")?.takeIf { it.isNotEmpty() }?.also {
                         trusttunnelBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             trusttunnelBean.allowInsecure = allowInsecure
                         }
                     }
-                    tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.also {
+                    tlsSettings.getStringArray("pinnedPeerCertificateSha256")?.takeIf { it.isNotEmpty() }?.also {
                         trusttunnelBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             trusttunnelBean.allowInsecure = allowInsecure
                         }
                     }
-                    tlsSettings.getStringArray("serverNameToVerify")?.also {
+                    tlsSettings.getStringArray("serverNameToVerify")?.takeIf { it.isNotEmpty() }?.also {
                         trusttunnelBean.serverNameToVerify = it.joinToString("\n")
                     }
                     /*tlsSettings.getObject("ech")?.also {

@@ -2,7 +2,7 @@ module libexclavecore
 
 go 1.26.0
 
-require github.com/exclavenetwork/libexclavecore v0.0.0-20260909141930-0f557ffe40a9
+require github.com/exclavenetwork/libexclavecore v0.0.0-20260922181106-e96cb7cca2fe
 
 require (
 	filippo.io/age v1.3.2 // indirect
@@ -10,17 +10,18 @@ require (
 	filippo.io/mldsa v0.0.0-20260711112038-ff3f469cee29 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
-	github.com/andybalholm/brotli v1.2.3 // indirect
+	github.com/andybalholm/brotli v1.2.4 // indirect
 	github.com/anytls/sing-anytls v0.0.13 // indirect
-	github.com/apernet/quic-go v0.61.1-0.20260806010916-184d081eef3e // indirect
+	github.com/apernet/quic-go v0.62.1-0.20260912175848-73339f7edbb9 // indirect
 	github.com/dgryski/go-camellia v0.0.0-20191119043421-69a8a13fb23d // indirect
 	github.com/dgryski/go-metro v0.0.0-20250106013310-edb8663e5e33 // indirect
 	github.com/dunglas/httpsfv v1.0.2 // indirect
-	github.com/enfein/mieru/v3 v3.36.1 // indirect
-	github.com/exclavenetwork/exclave-core/v5 v5.50.1-0.20260909090022-06157bdacd40 // indirect
+	github.com/enfein/mieru/v3 v3.37.0 // indirect
+	github.com/exclavenetwork/exclave-core/v5 v5.50.1-0.20260922180629-51ca1d75d612 // indirect
 	github.com/exclavenetwork/go-stun v0.1.7-0.20260811120819-d09f4628f065 // indirect
-	github.com/exclavenetwork/hysteria/core/v2 v2.12.2-1 // indirect
-	github.com/exclavenetwork/hysteria/extras/v2 v2.12.2-1 // indirect
+	github.com/exclavenetwork/hysteria/core/v2 v2.12.3-1 // indirect
+	github.com/exclavenetwork/hysteria/extras/v2 v2.12.3-1 // indirect
+	github.com/exclavenetwork/reality v0.0.0-20260921174136-96fe685b8ce9 // indirect
 	github.com/exclavenetwork/sing-juicity v0.3.0 // indirect
 	github.com/exclavenetwork/sing-shadowquic v0.0.0-20260904152941-03a261e772e4 // indirect
 	github.com/gofrs/uuid/v5 v5.5.1 // indirect
@@ -44,12 +45,12 @@ require (
 	github.com/miron404/connect-ip-go v0.0.0-20260828231553-a6b34803dbe5 // indirect
 	github.com/pires/go-proxyproto v0.15.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.62.0 // indirect
+	github.com/quic-go/quic-go v0.63.0 // indirect
 	github.com/refraction-networking/utls v1.8.3-0.20260802151714-23b1dac19c06 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
 	github.com/sagernet/quic-go v0.61.0-sing-box-mod.7 // indirect
-	github.com/sagernet/sing v0.9.3 // indirect
-	github.com/sagernet/sing-mux v0.3.6 // indirect
+	github.com/sagernet/sing v0.9.5 // indirect
+	github.com/sagernet/sing-mux v0.3.8 // indirect
 	github.com/sagernet/sing-quic v0.7.0 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.8 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.1 // indirect
@@ -63,7 +64,7 @@ require (
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb // indirect
 	golang.org/x/crypto v0.57.0 // indirect
-	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+	golang.org/x/exp v0.0.0-20250911091902-df9299821621 // indirect
 	golang.org/x/mobile v0.0.0-20260908204917-8b95e45f8d3e // indirect
 	golang.org/x/net v0.59.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
@@ -71,8 +72,8 @@ require (
 	golang.org/x/time v0.16.0 // indirect
 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2 // indirect
 	golang.zx2c4.com/wireguard v0.0.0-20260522210424-ecfc5a8d5446 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260908043556-f8649ddbbfe6 // indirect
-	google.golang.org/grpc v1.83.2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
+	google.golang.org/grpc v1.84.0 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 	gvisor.dev/gvisor v0.0.0-20250503011706-39ed1f5ac29c // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect

@@ -384,19 +384,16 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     bean.host = bean.sni
                 }
                 proxy.getObject("ws-opts")?.also { wsOpts ->
-                    bean.path = wsOpts.getString("path")
                     bean.maxEarlyData = wsOpts.getInt("max-early-data")
                     bean.earlyDataHeaderName = wsOpts.getString("early-data-header-name")
                     bean.path = wsOpts.getString("path")
                     if (!bean.path.isNullOrEmpty()) {
                         try {
                             val u = Libexclavecore.parseURL(bean.path)
-                            u.queryParameter("ed")?.also { ed ->
+                            u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.toIntOrNull()?.takeIf { it > 0 }?.also {
                                 u.deleteQueryParameter("ed")
                                 bean.path = u.string
-                                (ed.toIntOrNull())?.also {
-                                    bean.maxEarlyData = it
-                                }
+                                bean.maxEarlyData = it
                                 bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                             }
                         } catch (_: Exception) {}

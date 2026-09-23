@@ -359,7 +359,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 try {
                     // RPRX's smart-assed invention. This of course will break under some conditions.
                     val u = Libexclavecore.parseURL(path)
-                    u.queryParameter("ed")?.let {
+                    u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.let {
                         u.deleteQueryParameter("ed")
                         bean.path = u.string
                     }
@@ -386,11 +386,13 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 try {
                     // RPRX's smart-assed invention. This of course will break under some conditions.
                     val u = Libexclavecore.parseURL(path)
-                    u.queryParameter("ed")?.let { ed ->
+                    u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.let { ed ->
                         u.deleteQueryParameter("ed")
                         bean.path = u.string
-                        bean.maxEarlyData = ed.toIntOrNull()
-                        bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                        ed.toIntOrNull()?.takeIf { it > 0 }?.let {
+                            bean.maxEarlyData = it
+                            bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                        }
                     }
                 } catch (_: Exception) {}
             }
@@ -598,11 +600,13 @@ private fun parseV2RayN(json: JsonObject): VMessBean {
             try {
                 // RPRX's smart-assed invention. This of course will break under some conditions.
                 val u = Libexclavecore.parseURL(bean.path)
-                u.queryParameter("ed")?.let { ed ->
+                u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.let { ed ->
                     u.deleteQueryParameter("ed")
                     bean.path = u.string
-                    bean.maxEarlyData = ed.toIntOrNull()
-                    bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                    ed.toIntOrNull()?.takeIf { it > 0 }?.let {
+                        bean.maxEarlyData = it
+                        bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                    }
                 }
             } catch (_: Exception) {}
         }
@@ -612,7 +616,7 @@ private fun parseV2RayN(json: JsonObject): VMessBean {
             try {
                 // RPRX's smart-assed invention. This of course will break under some conditions.
                 val u = Libexclavecore.parseURL(bean.path)
-                u.queryParameter("ed")?.let {
+                u.queryParameter("ed")?.takeIf { it.isNotEmpty() }?.let {
                     u.deleteQueryParameter("ed")
                     bean.path = u.string
                 }
@@ -953,7 +957,10 @@ fun StandardV2RayBean.toUri(): String? {
                     builder.addQueryParameter("sni", sni)
                 }
             }
-            if (alpn.isNotEmpty()) {
+            if (type == "quic" && (alpn.isEmpty() || alpn.listByLineOrComma().isEmpty())) {
+                // https://github.com/ExclaveNetwork/Exclave/issues/488
+                builder.addQueryParameter("alpn", "h3")
+            } else if (alpn.isNotEmpty()) {
                 builder.addQueryParameter("alpn", alpn.listByLineOrComma().joinToString(","))
             }
             // as pinned certificate is not exportable, only add `allowInsecure=1` if pinned certificate is not used
@@ -1020,7 +1027,7 @@ fun StandardV2RayBean.toUri(): String? {
                 }
                 builder.addQueryParameter("pqv", realityMldsa65Verify)
             }
-            builder.addQueryParameter("fp", "chrome") // "chrome" is only a placeholder because "若使用 REALITY，此项不可省略。".
+            // builder.addQueryParameter("fp", "chrome") // "chrome" is only a placeholder because "若使用 REALITY，此项不可省略。".
             if (this is VLESSBean && flow.isNotEmpty()) {
                 builder.addQueryParameter("flow", flow.removeSuffix("-udp443"))
             }
