@@ -125,7 +125,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
                     SagerDatabase.proxyDao.updateProxy(profile)
 
-                    Logs.d("Send result for #$profileId ${profile.displayName()}")
+                    Logs.d("Send result for #$id ${profile.displayName()}")
 
                     val groupId = profile.groupId
                     val task = timerTask {
@@ -142,7 +142,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                     updateTasks.put(groupId, task)?.cancel()
                 }
             } else {
-                Logs.d("Profile with id #$profileId not found")
+                Logs.d("Profile with id #$id not found")
             }
         } else {
             Logs.d("Persist skipped on outbound ${status.outboundTag}")
