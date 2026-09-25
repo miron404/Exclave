@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.fmt.profileIdOfOutboundTag
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import kotlinx.coroutines.Job
@@ -71,15 +72,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     fun sendInitStatuses() {
         val time = (System.currentTimeMillis() / 1000) - 300
         for (observatoryTag in config.observatoryTags) {
-            val profileId = if (observatoryTag.contains("global-")) {
-                observatoryTag.substringAfter("global-")
-            } else {
-                observatoryTag.substringAfter("chain-")
-            }
-            val id = profileId.toLongOrNull()
-            if (id == null) {
-                continue
-            }
+            val id = profileIdOfOutboundTag(observatoryTag) ?: continue
             val profile = when {
                 id == profile.id -> profile
                 statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
@@ -110,12 +103,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             return
         }
         val status = OutboundStatus.parseFrom(statusPb)
-        val profileId = if (status.outboundTag.contains("global-")) {
-            status.outboundTag.substringAfter("global-")
-        } else {
-            status.outboundTag.substringAfter("chain-")
-        }
-        val id = profileId.toLongOrNull()
+        val id = profileIdOfOutboundTag(status.outboundTag)
         if (id != null) {
             val profile = when {
                 id == profile.id -> profile
