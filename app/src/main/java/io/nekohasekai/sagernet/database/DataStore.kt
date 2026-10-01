@@ -274,6 +274,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     // var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var requireDnsInbound by configurationStore.boolean(Key.REQUIRE_DNS_INBOUND)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
+    var connectionTestConcurrencyRaw by configurationStore.stringToInt(Key.CONNECTION_TEST_CONCURRENCY) { 6 }
+    var connectionTestTimeoutRaw by configurationStore.stringToInt(Key.CONNECTION_TEST_TIMEOUT) { 5000 }
+    // Each concurrent test runs a whole core instance, so cap what a phone has to carry.
+    val connectionTestConcurrency get() = connectionTestConcurrencyRaw.coerceIn(1, 32)
+    // Inner per-stage timeouts (DNS 5s, QUIC/WebSocket handshake 8s) still apply below this.
+    val connectionTestTimeout get() = connectionTestTimeoutRaw.coerceIn(500, 30000)
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
     var showGroupName by configurationStore.boolean(Key.SHOW_GROUP_NAME)
 

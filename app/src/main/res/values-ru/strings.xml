@@ -86,6 +86,8 @@
     <string name="server_address">Сервер</string>
     <string name="profile_name">Имя профиля</string>
     <string name="connection_test_url">URL-адрес проверки подключения</string>
+    <string name="connection_test_concurrency">Параллельность проверки подключения (1–32)</string>
+    <string name="connection_test_timeout_ms">Таймаут проверки подключения, мс (500–30000)</string>
     <string name="port_transproxy">Порт транспрокси</string>
     <string name="port_proxy">Порт прокси SOCKS5</string>
     <string name="service_mode_vpn">VPN</string>

@@ -226,6 +226,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
         mtu.isEnabled = serviceMode.value == MODE_VPN
         mtu.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        findPreference<EditTextPreference>(Key.CONNECTION_TEST_CONCURRENCY)!!.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        findPreference<EditTextPreference>(Key.CONNECTION_TEST_TIMEOUT)!!.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         mtu.onPreferenceChangeListener = reloadListener
         enableVPNInterfaceIPv6Address.isEnabled = serviceMode.value == MODE_VPN
         enableVPNInterfaceIPv6Address.onPreferenceChangeListener = reloadListener
