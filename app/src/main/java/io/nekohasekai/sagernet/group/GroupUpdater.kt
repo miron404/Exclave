@@ -24,8 +24,11 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
+import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
+import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -40,6 +43,66 @@ abstract class GroupUpdater {
         userInterface: GroupManager.Interface?,
         byUser: Boolean
     )
+
+    // Names repeats "X", "X (1)", "X (2)"... exactly as the old per-proxy loop did, but
+    // resumes each base name where it last stopped instead of walking its whole chain
+    // again, which was quadratic when thousands of proxies share a name.
+    protected fun renameDuplicateNames(proxies: List<AbstractBean>): List<AbstractBean> {
+        val proxiesMap = LinkedHashMap<String, AbstractBean>()
+        val lastTaken = HashMap<String, Pair<Int, String>>()
+        for (proxy in proxies) {
+            val base = proxy.displayName()
+            var (index, name) = lastTaken[base] ?: (0 to base)
+            while (proxiesMap.containsKey(name)) {
+                index++
+                name = name.replace(" (${index - 1})", "")
+                name = "$name ($index)"
+            }
+            if (index > 0) proxy.name = name
+            lastTaken[base] = index to name
+            proxiesMap[proxy.displayName()] = proxy
+        }
+        return proxiesMap.values.toList()
+    }
+
+    // Keeps the first proxy of each key and reports the rest the way the old LinkedHashSet
+    // loop did, but takes the first one's position from a map instead of indexOf.
+    protected fun <K : Any> deduplicate(
+        proxies: List<AbstractBean>,
+        duplicate: MutableList<String>,
+        key: (AbstractBean) -> K,
+    ): List<AbstractBean> {
+        val firstIndex = HashMap<K, Int>()
+        val uniqueNames = HashMap<K, String>()
+        val unique = ArrayList<AbstractBean>()
+        for (p in proxies) {
+            val proxy = key(p)
+            val index = firstIndex[proxy]
+            if (index == null) {
+                firstIndex[proxy] = unique.size
+                uniqueNames[proxy] = p.displayName()
+                unique.add(p)
+                continue
+            }
+            val name = uniqueNames[proxy]!!.replace(" ($index)", "")
+            if (name.isNotEmpty()) {
+                duplicate.add("$name ($index)")
+                uniqueNames[proxy] = ""
+            }
+            duplicate.add(p.displayName() + " ($index)")
+        }
+        return unique
+    }
+
+    // One transaction instead of one per added proxy: each write transaction also
+    // notifies the service process (multi-instance invalidation).
+    protected fun commitProxies(toAdd: List<ProxyEntity>, toUpdate: List<ProxyEntity>, toDelete: List<ProxyEntity>) {
+        SagerDatabase.runInTransaction {
+            SagerDatabase.proxyDao.insert(toAdd)
+            SagerDatabase.proxyDao.updateProxy(toUpdate)
+            SagerDatabase.proxyDao.deleteProxy(toDelete)
+        }
+    }
 
     data class Progress(
         var max: Int

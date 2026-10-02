@@ -103,25 +103,7 @@ object SIP008Updater : GroupUpdater() {
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
-            val uniqueProfiles = LinkedHashSet<AbstractBean>()
-            val uniqueNames = HashMap<AbstractBean, String>()
-            for (proxy in profiles) {
-                if (!uniqueProfiles.add(proxy)) {
-                    val index = uniqueProfiles.indexOf(proxy)
-                    if (uniqueNames.containsKey(proxy)) {
-                        val name = uniqueNames[proxy]!!.replace(" ($index)", "")
-                        if (name.isNotEmpty()) {
-                            duplicate.add("$name ($index)")
-                            uniqueNames[proxy] = ""
-                        }
-                    }
-                    duplicate.add(proxy.displayName() + " ($index)")
-                } else {
-                    uniqueNames[proxy] = proxy.displayName()
-                }
-            }
-            uniqueProfiles.retainAll(uniqueNames.keys)
-            profiles = uniqueProfiles.toMutableList()
+            profiles = deduplicate(profiles, duplicate) { it }.toMutableList()
         }
 
         val profileMap = profiles.associateBy { it.profileId }
@@ -134,6 +116,7 @@ object SIP008Updater : GroupUpdater() {
             }
         }.toMap()
 
+        val toAdd = ArrayList<ProxyEntity>()
         val toUpdate = ArrayList<ProxyEntity>()
         val added = mutableListOf<String>()
         val updated = mutableMapOf<String, String>()
@@ -162,7 +145,7 @@ object SIP008Updater : GroupUpdater() {
                 }
             } else {
                 changed++
-                SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                toAdd.add(ProxyEntity(
                     groupId = proxyGroup.id, userOrder = userOrder
                 ).apply {
                     putBean(bean)
@@ -172,8 +155,7 @@ object SIP008Updater : GroupUpdater() {
             userOrder++
         }
 
-        SagerDatabase.proxyDao.updateProxy(toUpdate)
-        SagerDatabase.proxyDao.deleteProxy(toDelete)
+        commitProxies(toAdd, toUpdate, toDelete)
 
         subscription.lastUpdated = System.currentTimeMillis() / 1000
         SagerDatabase.groupDao.updateGroup(proxyGroup)

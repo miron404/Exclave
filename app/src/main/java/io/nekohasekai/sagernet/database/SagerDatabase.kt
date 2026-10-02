@@ -147,6 +147,8 @@ abstract class SagerDatabase : RoomDatabase() {
         val statsDao get() = instance.statsDao()
         val assetDao get() = instance.assetDao()
 
+        fun runInTransaction(block: () -> Unit) = instance.runInTransaction(Runnable { block() })
+
     }
 
     abstract fun groupDao(): ProxyGroup.Dao

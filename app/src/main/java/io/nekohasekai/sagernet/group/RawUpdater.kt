@@ -142,44 +142,12 @@ object RawUpdater : GroupUpdater() {
             proxies = proxies.filter { pattern.containsMatchIn(it.name) }
         }
 
-        val proxiesMap = LinkedHashMap<String, AbstractBean>()
-        for (proxy in proxies) {
-            var index = 0
-            var name = proxy.displayName()
-            while (proxiesMap.containsKey(name)) {
-                println("Exists name: $name")
-                index++
-                name = name.replace(" (${index - 1})", "")
-                name = "$name ($index)"
-                proxy.name = name
-            }
-            proxiesMap[proxy.displayName()] = proxy
-        }
-        proxies = proxiesMap.values.toList()
+        proxies = renameDuplicateNames(proxies)
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
-            val uniqueProxies = LinkedHashSet<Protocols.Deduplication>()
-            val uniqueNames = HashMap<Protocols.Deduplication, String>()
-            for (p in proxies) {
-                val proxy = Protocols.Deduplication(p, p.javaClass.toString())
-                if (!uniqueProxies.add(proxy)) {
-                    val index = uniqueProxies.indexOf(proxy)
-                    if (uniqueNames.containsKey(proxy)) {
-                        val name = uniqueNames[proxy]!!.replace(" ($index)", "")
-                        if (name.isNotEmpty()) {
-                            duplicate.add("$name ($index)")
-                            uniqueNames[proxy] = ""
-                        }
-                    }
-                    duplicate.add(p.displayName() + " ($index)")
-                } else {
-                    uniqueNames[proxy] = p.displayName()
-                }
-            }
-            uniqueProxies.retainAll(uniqueNames.keys)
-            proxies = uniqueProxies.toList().map { it.bean }
+            proxies = deduplicate(proxies, duplicate) { Protocols.Deduplication(it, it.javaClass.toString()) }
         }
 
         val nameMap = proxies.associateBy { bean ->
@@ -195,6 +163,7 @@ object RawUpdater : GroupUpdater() {
             }
         }.toMap()
 
+        val toAdd = ArrayList<ProxyEntity>()
         val toUpdate = ArrayList<ProxyEntity>()
         val added = mutableListOf<String>()
         val updated = mutableMapOf<String, String>()
@@ -222,7 +191,7 @@ object RawUpdater : GroupUpdater() {
                 }
             } else {
                 changed++
-                SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                toAdd.add(ProxyEntity(
                     groupId = proxyGroup.id, userOrder = userOrder
                 ).apply {
                     putBean(bean)
@@ -232,8 +201,7 @@ object RawUpdater : GroupUpdater() {
             userOrder++
         }
 
-        SagerDatabase.proxyDao.updateProxy(toUpdate)
-        SagerDatabase.proxyDao.deleteProxy(toDelete)
+        commitProxies(toAdd, toUpdate, toDelete)
 
         subscription.lastUpdated = System.currentTimeMillis() / 1000
         SagerDatabase.groupDao.updateGroup(proxyGroup)

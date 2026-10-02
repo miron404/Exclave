@@ -67,23 +67,22 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
             var status = context.resources.getQuantityString(R.plurals.group_updated, changed, group.name, changed) + "\n\n"
             if (added.isNotEmpty()) {
                 status += context.getString(
-                        R.string.group_added, added.joinToString("\n", postfix = "\n\n")
+                        R.string.group_added, added.capped().joinToString("\n", postfix = "\n\n")
                 )
             }
             if (updated.isNotEmpty()) {
                 status += context.getString(R.string.group_changed,
-                        updated.map { it }.joinToString("\n", postfix = "\n\n") {
-                            if (it.key == it.value) it.key else "${it.key} => ${it.value}"
-                        })
+                        updated.map { if (it.key == it.value) it.key else "${it.key} => ${it.value}" }
+                            .capped().joinToString("\n", postfix = "\n\n"))
             }
             if (deleted.isNotEmpty()) {
                 status += context.getString(
-                        R.string.group_deleted, deleted.joinToString("\n", postfix = "\n\n")
+                        R.string.group_deleted, deleted.capped().joinToString("\n", postfix = "\n\n")
                 )
             }
             if (duplicate.isNotEmpty()) {
                 status += context.getString(
-                        R.string.group_duplicate, duplicate.joinToString("\n", postfix = "\n\n")
+                        R.string.group_duplicate, duplicate.capped().joinToString("\n", postfix = "\n\n")
                 )
             }
 
@@ -96,6 +95,10 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
             }
         }
     }
+
+    // A dialog listing every name of a 10k subscription freezes the UI laying out its text.
+    private fun List<String>.capped(max: Int = 50) =
+        if (size <= max) this else take(max) + "… (+${size - max})"
 
     override suspend fun onUpdateFailure(group: ProxyGroup, message: String) {
         onMainDispatcher {
