@@ -1352,11 +1352,18 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             private val updated = HashSet<ProxyEntity>()
 
+            private var filtered = false
+
             fun filter(name: String) {
                 if (name.isEmpty()) {
-                    reloadProfiles()
+                    // Called on every tab switch, filtered or not. Reloading the group here
+                    // read all of its profiles on the main thread each time.
+                    if (!filtered) return
+                    filtered = false
+                    runOnDefaultDispatcher { reloadProfiles() }
                     return
                 }
+                filtered = true
                 configurationIdList.clear()
                 val lower = name.lowercase()
                 configurationIdList.addAll(configurationList.filter {
