@@ -25,8 +25,8 @@ import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 
 import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean;
@@ -72,8 +72,9 @@ public class KryoConverters {
 
     public static <T extends Serializable> T deserialize(T bean, byte[] bytes) {
         if (bytes == null) return bean;
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        ByteBufferInput buffer = KryosKt.byteBuffer(input);
+        // Wrap rather than stream: the stream constructor allocates a 4 KiB direct buffer
+        // per bean, which loading a group of thousands of profiles pays for each row.
+        ByteBufferInput buffer = new ByteBufferInput(ByteBuffer.wrap(bytes));
         try {
             bean.deserializeFromBuffer(buffer);
         } catch (KryoException e) {

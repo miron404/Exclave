@@ -120,8 +120,12 @@ class ConfigurationFragment @JvmOverloads constructor(
         override fun onPageScrolled(
             position: Int, positionOffset: Float, positionOffsetPixels: Int
         ) {
-            if (adapter.groupList.size > position) {
-                DataStore.selectedGroup = adapter.groupList[position].id
+            // Called on every frame of a swipe; writing the setting each time meant a
+            // database write on the main thread per frame. Write once the page settles.
+            if (positionOffset != 0f || adapter.groupList.size <= position) return
+            val group = adapter.groupList[position].id
+            if (DataStore.selectedGroup != group) {
+                DataStore.selectedGroup = group
             }
         }
     }
@@ -1108,7 +1112,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             super.onResume()
 
             if (::adapter.isInitialized) {
-                if (adapter.itemCount == 0) {
+                if (adapter.itemCount == 0 && !adapter.reloadRequested) {
                     runOnDefaultDispatcher { adapter.reloadProfiles() }
                 }
             } else {
@@ -1195,6 +1199,10 @@ class ConfigurationFragment @JvmOverloads constructor(
             GroupManager.addListener(adapter)
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
+            // Load while still offscreen, so a large group is ready by the time it is
+            // swiped to instead of loading only once it is resumed.
+            adapter.reloadRequested = true
+            runOnDefaultDispatcher { adapter.reloadProfiles() }
 
             if (!parent.select) {
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
@@ -1266,6 +1274,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             var configurationIdList: MutableList<Long> = mutableListOf()
+            @Volatile
+            var reloadRequested = false
             val configurationList = HashMap<Long, ProxyEntity>()
             val pendingDeletedIds = java.util.concurrent.ConcurrentHashMap.newKeySet<Long>()
 
