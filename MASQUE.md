@@ -134,11 +134,20 @@ is still taken into account and the smaller of the two wins, so the period is a
 ceiling rather than a promise. `TestKeepalivePeriodIsNotHalvedByTheIdleTimeout`
 holds the relationship.
 
+What the endpoint advertises was measured in October 2026 by the core's
+`MASQUE probe` workflow, which registers a throwaway device and records the
+transport parameters a consumer endpoint sends: a `max_idle_timeout` of 56
+seconds, and it holds to it. So an idle tunnel pings every 28 seconds at most,
+whatever the profile asks for; a keepalive period above 28 changes nothing.
+The only way to make an idle QUIC tunnel quieter than that is to not keep the
+session at all. Run the workflow again if Cloudflare's numbers are in doubt.
+
 **Below 1280 there is no IPv6.** gVisor refuses a link smaller than that
 outright, so the tunnel drops IPv6 addresses when it is resized below it, and
 says so. A profile MTU under 1280 costs IPv6 the same way.
 
-**A migrated connection keeps every socket it has used.** quic-go leaves the
+**A migrated connection keeps every socket it has used.** (Moot against
+Cloudflare for now, see below, but true of any endpoint that allows it.) quic-go leaves the
 connection registered on each transport it ran on, and closing a transport, or
 the socket under it, which makes its reader fail and close it, destroys every
 connection registered there. So the old socket is held until the session ends,
@@ -153,20 +162,25 @@ default. The tunnel used to be dropped whole, stack included, so every
 connection in it was reset. Now the stack stays, and with it the addresses and
 every flow on them:
 
-- over QUIC, the connection is moved onto a socket opened on the new network
-  (`AddPath`, `Probe`, `Switch`). No handshake and no new CONNECT-IP request,
-  just a few PATH_CHALLENGE frames, and quic-go restarts congestion control and
-  MTU discovery for the new path;
-- if that cannot be done (HTTP/2, a chained outbound, a refused or unanswered
-  probe, too many moves), the session is dropped and redialed the usual lazy
-  way, on the first packet something wants to send, so an idle tunnel spends
-  nothing on it;
+- over QUIC, the connection is to be moved onto a socket opened on the new
+  network (`AddPath`, `Probe`, `Switch`). No handshake and no new CONNECT-IP
+  request, just a few PATH_CHALLENGE frames, and quic-go restarts congestion
+  control and MTU discovery for the new path. **Cloudflare's endpoints do not
+  allow it**: they send `disable_active_migration`, measured by the probe, and
+  quic-go's `AddPath` refuses outright when the peer has. Against them every
+  network change takes the next branch, which is what the device tests in
+  September actually exercised;
+- if that cannot be done (Cloudflare, HTTP/2, a chained outbound, a refused or
+  unanswered probe, too many moves), the session is dropped and redialed the
+  usual lazy way, on the first packet something wants to send, so an idle
+  tunnel spends nothing on it;
 - only a tunnel whose MTU was lowered for the old path is rebuilt, because a
   stack's link MTU is fixed when it is made.
 
 Whether an inner flow survives a redial depends on Cloudflare keeping the
-device's egress mapping across sessions, which could not be checked here. A
-migration keeps the session itself, so nothing there depends on it.
+device's egress mapping across sessions, which could not be checked here.
+Switching networks on the device did not break anything, which suggests it
+does, since the redial is what ran there.
 
 ## How the MTU works
 
