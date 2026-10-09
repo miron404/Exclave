@@ -232,10 +232,14 @@ drops the filesystem replace at the end of the file, and `tidy` then quietly
 resolves against the upstream core instead of the submodule; put it back before
 running tidy.
 
-Watch the build tags too. Upstream builds with `http2legacy`, which picks the
-HTTP/2 client `golang.org/x/net/http2` carries, and the HTTP/2 mode runs on
-it. The core's `masque.yml` workflow tests with the same tags, so keep the two
-in step when upstream changes them.
+Watch the build tags too. Since Go 1.27, `golang.org/x/net/http2` is a thin
+wrapper over net/http's own HTTP/2 client unless the build sets
+`http2legacy`, which keeps x/net's original one. Upstream used the tag for a
+while and dropped it in October 2026. The HTTP/2 mode runs on whichever one
+the build picks and works on both: the endpoint takes a plain CONNECT, not the
+extended one net/http refuses, and `ReadIdleTimeout` reaches net/http as
+`SendPingTimeout`. The core's `masque.yml` workflow tests with the app's tags,
+so keep the two in step when upstream changes them.
 
 Watch for a quic-go bump. 0.60 to 0.61 replaced `http3.ParseCapsule` with a
 stateful `http3.CapsuleParser`, which is why connect-ip-go is forked at all, and
