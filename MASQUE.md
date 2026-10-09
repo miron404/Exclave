@@ -220,27 +220,41 @@ Over QUIC a dead path is found by the keepalive, because the idle timeout then
 expires and fails the connection. HTTP/2 has no such clock: the tunnel request
 stays open for the life of the session, so a TCP path that dies silently would
 park both pumps on a socket that will never deliver again, with no error to end
-them and nothing to make the supervisor redial. Two things on the socket cover
-that, both set in `tcp.go`:
+them and nothing to make the supervisor redial. Three things cover that:
 
-- `TCP_USER_TIMEOUT` of 30 seconds: data that goes that long unacknowledged
-  gives the connection up. A path that died while idle is found as soon as
-  something is sent on it, and it costs nothing while nothing is, since it needs
-  no timer of its own;
-- a TCP keepalive, four minutes by default, which keeps the carrier's NAT
+- **an on-demand ping** (`liveness.go`): when the session has sent something
+  and heard nothing back for ten seconds, it pings the endpoint, and a session
+  that does not answer within ten more is closed and redialed. The endpoint
+  itself answers, so this works through any chain of proxies, and an idle
+  tunnel never triggers it;
+- **`TCP_USER_TIMEOUT` of 30 seconds** on the socket: data that goes that long
+  unacknowledged gives the connection up, again only when something was sent;
+- **a TCP keepalive**, four minutes by default, which keeps the carrier's NAT
   mapping alive so that incoming data, a notification say, still arrives after
   a long quiet spell. 0 in the profile turns it off.
 
-**The core dialer turns on Go's default keepalive otherwise**: a probe after 15
-seconds idle and every 15 seconds after, on every TCP socket it dials. Before
-`tcp.go` that was what kept the HTTP/2 mode alive across a night of idling, at
-four radio wakeups a minute, more than QUIC's pings. Every other TCP outbound
-in the app still carries it.
+The socket options are set by `internet.TuneLongLivedTCP`, which the HTTP
+proxy outbound uses as well. **It has to look through the connection tracker**:
+every connection an outbound dials comes wrapped in it, and the first version
+of this tuning only looked through the byte counters, found no socket, and
+silently did nothing. Its test builds the wrappers the way a dial does, and the
+only check that caught it was inspecting a real instance's sockets.
 
-The liveness ping stays off by default. With the user timeout in place it is
-only worth turning on when the tunnel runs through another proxy, whose
-connection the socket options do not reach, and which can drop the session
-without telling either end.
+**The core dialer turns on Go's default keepalive otherwise**: a probe after 15
+seconds idle and every 15 seconds after, on every TCP socket it dials. That was
+what kept the HTTP/2 mode alive across a night of idling, at four radio
+wakeups a minute. The HTTP proxy outbound now tunes its sockets too; every
+other TCP outbound in the app still carries the default.
+
+The periodic liveness ping stays off by default. The on-demand ping covers a
+dead path, through proxies included; the periodic one only adds keeping an
+idle connection warm through a proxy that drops quiet tunnels, at a wakeup per
+period.
+
+**Through an HTTPS proxy** the tunnel's connection is the proxy outbound's,
+which tunes its own socket the same way and pings an HTTP/2 connection to the
+proxy only after four minutes of silence. The leg beyond the proxy is covered
+only by the on-demand ping.
 
 ## How the HTTP/2 mode spends CPU
 
