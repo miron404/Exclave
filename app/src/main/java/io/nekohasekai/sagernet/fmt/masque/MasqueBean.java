@@ -40,6 +40,12 @@ public class MasqueBean extends AbstractBean {
     public static final String DEFAULT_HTTP2_ADDRESS = "162.159.198.2";
 
     /**
+     * Four minutes keeps the mapping of most carrier NATs alive at a
+     * sixteenth of the wakeups Go's default of 15 seconds costs.
+     */
+    public static final int DEFAULT_TCP_KEEPALIVE_PERIOD = 240;
+
+    /**
      * Endpoint used in HTTP/2 mode. Empty falls back to {@link #DEFAULT_HTTP2_ADDRESS}.
      */
     public String http2Address;
@@ -65,6 +71,11 @@ public class MasqueBean extends AbstractBean {
      * 0 leaves it unchecked. QUIC uses {@link #keepalivePeriod} instead.
      */
     public Integer http2PingPeriod;
+    /**
+     * Seconds the HTTP/2 connection may sit idle before the kernel probes it.
+     * 0 turns the probes off. QUIC uses {@link #keepalivePeriod} instead.
+     */
+    public Integer tcpKeepalivePeriod;
     public Boolean allowInsecure;
 
     @Override
@@ -82,13 +93,14 @@ public class MasqueBean extends AbstractBean {
         if (keepalivePeriod == null) keepalivePeriod = 30;
         if (initialPacketSize == null) initialPacketSize = 0;
         if (http2PingPeriod == null) http2PingPeriod = 0;
+        if (tcpKeepalivePeriod == null) tcpKeepalivePeriod = DEFAULT_TCP_KEEPALIVE_PERIOD;
         if (allowInsecure == null) allowInsecure = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
         super.serialize(output);
-        output.writeInt(1);
+        output.writeInt(2);
         output.writeString(http2Address);
         output.writeString(privateKey);
         output.writeString(endpointPublicKey);
@@ -100,6 +112,7 @@ public class MasqueBean extends AbstractBean {
         output.writeInt(initialPacketSize);
         output.writeBoolean(allowInsecure);
         output.writeInt(http2PingPeriod);
+        output.writeInt(tcpKeepalivePeriod);
     }
 
     @Override
@@ -118,6 +131,9 @@ public class MasqueBean extends AbstractBean {
         allowInsecure = input.readBoolean();
         if (version >= 1) {
             http2PingPeriod = input.readInt();
+        }
+        if (version >= 2) {
+            tcpKeepalivePeriod = input.readInt();
         }
     }
 

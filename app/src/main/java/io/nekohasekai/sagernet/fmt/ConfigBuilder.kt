@@ -1888,6 +1888,9 @@ fun buildV2RayConfig(
                                         if (bean.http2PingPeriod > 0) {
                                             http2PingPeriod = bean.http2PingPeriod
                                         }
+                                        // 0 in the profile means off, which
+                                        // the core spells as negative.
+                                        tcpKeepalivePeriod = bean.tcpKeepalivePeriod.takeIf { it > 0 } ?: -1
                                     })
                                 // The tunnel dials on its own network stack, which needs
                                 // an address rather than a name.

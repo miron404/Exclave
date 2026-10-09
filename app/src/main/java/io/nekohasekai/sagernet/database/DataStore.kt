@@ -382,6 +382,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMasqueKeepalivePeriod by profileCacheStore.stringToInt(Key.SERVER_MASQUE_KEEPALIVE_PERIOD)
     var serverMasqueInitialPacketSize by profileCacheStore.stringToInt(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)
     var serverMasqueHTTP2PingPeriod by profileCacheStore.stringToInt(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)
+    var serverMasqueTCPKeepalivePeriod by profileCacheStore.stringToInt(Key.SERVER_MASQUE_TCP_KEEPALIVE_PERIOD)
 
     var serverVMessExperimentalAuthenticatedLength by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_AUTHENTICATED_LENGTH)
     var serverVMessExperimentalNoTerminationSignal by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_NO_TERMINATION_SIGNAL)

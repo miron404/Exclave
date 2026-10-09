@@ -49,6 +49,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         DataStore.serverMasqueKeepalivePeriod = keepalivePeriod
         DataStore.serverMasqueInitialPacketSize = initialPacketSize
         DataStore.serverMasqueHTTP2PingPeriod = http2PingPeriod
+        DataStore.serverMasqueTCPKeepalivePeriod = tcpKeepalivePeriod
         DataStore.serverAllowInsecure = allowInsecure
     }
 
@@ -66,6 +67,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         keepalivePeriod = DataStore.serverMasqueKeepalivePeriod
         initialPacketSize = DataStore.serverMasqueInitialPacketSize
         http2PingPeriod = DataStore.serverMasqueHTTP2PingPeriod
+        tcpKeepalivePeriod = DataStore.serverMasqueTCPKeepalivePeriod
         allowInsecure = DataStore.serverAllowInsecure
     }
 
@@ -93,10 +95,14 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         findPreference<EditTextPreference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
+        findPreference<EditTextPreference>(Key.SERVER_MASQUE_TCP_KEEPALIVE_PERIOD)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
 
         // Every transport setting below belongs to exactly one of the two: the
         // keepalive and the initial packet size only ever reach quic-go, the
-        // HTTP/2 endpoint and its liveness check only the HTTP/2 transport.
+        // HTTP/2 endpoint, its liveness check and its TCP keepalive only the
+        // HTTP/2 transport.
         // Showing the other set would offer settings that quietly do nothing.
         val modePreference = findPreference<ListPreference>(Key.SERVER_MASQUE_MODE)!!
         val quicOnly = listOf(
@@ -106,6 +112,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         val http2Only = listOf(
             findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_ADDRESS)!!,
             findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!,
+            findPreference<Preference>(Key.SERVER_MASQUE_TCP_KEEPALIVE_PERIOD)!!,
         )
         fun showModeOf(value: Any?) {
             val http2 = value == MasqueBean.MODE_HTTP2

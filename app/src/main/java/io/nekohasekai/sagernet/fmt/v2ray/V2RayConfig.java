@@ -1067,6 +1067,7 @@ public class V2RayConfig {
         public Integer keepalivePeriod;
         public Integer initialPacketSize;
         public Integer http2PingPeriod;
+        public Integer tcpKeepalivePeriod;
         public String domainStrategy;
 
     }

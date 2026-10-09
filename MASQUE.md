@@ -211,20 +211,48 @@ climb on a network you know: pinned, there is nothing to fall back to.
 ## Each transport has its own settings
 
 `keepalive_period` and `initial_packet_size` reach quic-go and nothing else;
-`http2_ping_period` reaches `http2.Transport.ReadIdleTimeout` and nothing else.
+`http2_ping_period` reaches `http2.Transport.ReadIdleTimeout` and
+`tcp_keepalive_period` the HTTP/2 connection's socket, and nothing else.
 The profile editor shows one set or the other, following the selected
 transport, so that none of them is a knob that quietly does nothing.
 
-The liveness check is off by default, and that is deliberate. Over QUIC a dead
-path is found by the keepalive, because the idle timeout then expires and fails
-the connection. HTTP/2 has no such clock: the tunnel request stays open for the
-life of the session, so a TCP path that dies silently parks both pumps on a
-socket that will never deliver again, with no error to end them and nothing to
-make the supervisor redial. A ping is what produces that error. It was measured
-against rather than overlooked, though: the mode holds a connection across a
-night of idling without one, and a ping frequent enough to be useful costs the
-radio wakeups this mode otherwise avoids. Worth turning on when the tunnel runs
-through another proxy, which can drop the session without telling either end.
+Over QUIC a dead path is found by the keepalive, because the idle timeout then
+expires and fails the connection. HTTP/2 has no such clock: the tunnel request
+stays open for the life of the session, so a TCP path that dies silently would
+park both pumps on a socket that will never deliver again, with no error to end
+them and nothing to make the supervisor redial. Two things on the socket cover
+that, both set in `tcp.go`:
+
+- `TCP_USER_TIMEOUT` of 30 seconds: data that goes that long unacknowledged
+  gives the connection up. A path that died while idle is found as soon as
+  something is sent on it, and it costs nothing while nothing is, since it needs
+  no timer of its own;
+- a TCP keepalive, four minutes by default, which keeps the carrier's NAT
+  mapping alive so that incoming data, a notification say, still arrives after
+  a long quiet spell. 0 in the profile turns it off.
+
+**The core dialer turns on Go's default keepalive otherwise**: a probe after 15
+seconds idle and every 15 seconds after, on every TCP socket it dials. Before
+`tcp.go` that was what kept the HTTP/2 mode alive across a night of idling, at
+four radio wakeups a minute, more than QUIC's pings. Every other TCP outbound
+in the app still carries it.
+
+The liveness ping stays off by default. With the user timeout in place it is
+only worth turning on when the tunnel runs through another proxy, whose
+connection the socket options do not reach, and which can drop the session
+without telling either end.
+
+## How the HTTP/2 mode spends CPU
+
+The HTTP/2 client writes a DATA frame, and flushes it to the connection, for
+every read it makes from the request body. connect-ip-go used to feed it
+through an `io.Pipe`, one packet per read, so every packet cost its own frame,
+TLS record and write system call. It now queues capsules while the transport
+is busy and hands them over together (`h2_body.go`), with nothing waiting on a
+timer. Measured through a real endpoint with the probe workflow, client CPU per
+gigabyte: upload 19.2s to 6.9s, download 32s to 23.7s, against QUIC's 21s.
+Download stays dearer than upload because the inner TCP's acknowledgements go
+out one at a time as data trickles in, and each is still a write.
 
 ## Updating from upstream
 

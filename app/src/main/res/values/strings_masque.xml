@@ -21,4 +21,6 @@
     <string name="masque_initial_packet_size_sum">0 keeps path MTU discovery enabled.</string>
     <string name="masque_http2_ping_period">Liveness check (s)</string>
     <string name="masque_http2_ping_period_sum">Ping the connection once it has received nothing for this long, and drop it if the ping goes unanswered. 0 leaves it unchecked, which is fine on a direct path; set it when the tunnel runs through another proxy.</string>
+    <string name="masque_tcp_keepalive_period">TCP keepalive (s)</string>
+    <string name="masque_tcp_keepalive_period_sum">How long the connection may sit idle before it is probed. Each probe wakes the radio; too long, and a carrier NAT may drop the idle connection, delaying incoming notifications until the phone next sends something. 0 turns probing off.</string>
 </resources>

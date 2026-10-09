@@ -272,6 +272,7 @@ object Key {
     const val SERVER_MASQUE_KEEPALIVE_PERIOD = "serverMasqueKeepalivePeriod"
     const val SERVER_MASQUE_INITIAL_PACKET_SIZE = "serverMasqueInitialPacketSize"
     const val SERVER_MASQUE_HTTP2_PING_PERIOD = "serverMasqueHTTP2PingPeriod"
+    const val SERVER_MASQUE_TCP_KEEPALIVE_PERIOD = "serverMasqueTCPKeepalivePeriod"
 
     const val SERVER_NAIVE_NO_POST_QUANTUM = "serverNaiveNoPostQuantum"
     const val SERVER_NAIVE_TUNNEL_TIMEOUT = "serverNaiveTunnelTimeout"
