@@ -28,46 +28,46 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.masque.MasqueBean
+import io.nekohasekai.sagernet.fmt.warpmasque.WarpMasqueBean
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 
-class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
+class WarpMasqueSettingsActivity : ProfileSettingsActivity<WarpMasqueBean>() {
 
-    override fun createEntity() = MasqueBean()
+    override fun createEntity() = WarpMasqueBean()
 
-    override fun MasqueBean.init() {
+    override fun WarpMasqueBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
-        DataStore.serverMasqueMode = mode
-        DataStore.serverMasqueHTTP2Address = http2Address
+        DataStore.serverWarpMasqueMode = mode
+        DataStore.serverWarpMasqueHTTP2Address = http2Address
         DataStore.serverPrivateKey = privateKey
-        DataStore.serverMasqueEndpointPublicKey = endpointPublicKey
+        DataStore.serverWarpMasqueEndpointPublicKey = endpointPublicKey
         DataStore.serverLocalAddress = localAddress
         DataStore.serverSNI = sni
         DataStore.serverMTU = mtu
-        DataStore.serverMasqueKeepalivePeriod = keepalivePeriod
-        DataStore.serverMasqueInitialPacketSize = initialPacketSize
-        DataStore.serverMasqueHTTP2PingPeriod = http2PingPeriod
-        DataStore.serverMasqueTCPKeepalivePeriod = tcpKeepalivePeriod
+        DataStore.serverWarpMasqueKeepalivePeriod = keepalivePeriod
+        DataStore.serverWarpMasqueInitialPacketSize = initialPacketSize
+        DataStore.serverWarpMasqueHTTP2PingPeriod = http2PingPeriod
+        DataStore.serverWarpMasqueTCPKeepalivePeriod = tcpKeepalivePeriod
         DataStore.serverAllowInsecure = allowInsecure
     }
 
-    override fun MasqueBean.serialize() {
+    override fun WarpMasqueBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
-        mode = DataStore.serverMasqueMode
-        http2Address = DataStore.serverMasqueHTTP2Address.unwrapIDN()
+        mode = DataStore.serverWarpMasqueMode
+        http2Address = DataStore.serverWarpMasqueHTTP2Address.unwrapIDN()
         privateKey = DataStore.serverPrivateKey
-        endpointPublicKey = DataStore.serverMasqueEndpointPublicKey
+        endpointPublicKey = DataStore.serverWarpMasqueEndpointPublicKey
         localAddress = DataStore.serverLocalAddress
         sni = DataStore.serverSNI
         mtu = DataStore.serverMTU
-        keepalivePeriod = DataStore.serverMasqueKeepalivePeriod
-        initialPacketSize = DataStore.serverMasqueInitialPacketSize
-        http2PingPeriod = DataStore.serverMasqueHTTP2PingPeriod
-        tcpKeepalivePeriod = DataStore.serverMasqueTCPKeepalivePeriod
+        keepalivePeriod = DataStore.serverWarpMasqueKeepalivePeriod
+        initialPacketSize = DataStore.serverWarpMasqueInitialPacketSize
+        http2PingPeriod = DataStore.serverWarpMasqueHTTP2PingPeriod
+        tcpKeepalivePeriod = DataStore.serverWarpMasqueTCPKeepalivePeriod
         allowInsecure = DataStore.serverAllowInsecure
     }
 
@@ -75,7 +75,7 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.masque_preferences)
+        addPreferencesFromResource(R.xml.warp_masque_preferences)
 
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -86,16 +86,16 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         findPreference<EditTextPreference>(Key.SERVER_MTU)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
-        findPreference<EditTextPreference>(Key.SERVER_MASQUE_KEEPALIVE_PERIOD)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_WARP_MASQUE_KEEPALIVE_PERIOD)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
-        findPreference<EditTextPreference>(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_WARP_MASQUE_INITIAL_PACKET_SIZE)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
-        findPreference<EditTextPreference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_WARP_MASQUE_HTTP2_PING_PERIOD)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
-        findPreference<EditTextPreference>(Key.SERVER_MASQUE_TCP_KEEPALIVE_PERIOD)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_WARP_MASQUE_TCP_KEEPALIVE_PERIOD)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
 
@@ -104,18 +104,18 @@ class MasqueSettingsActivity : ProfileSettingsActivity<MasqueBean>() {
         // HTTP/2 endpoint, its liveness check and its TCP keepalive only the
         // HTTP/2 transport.
         // Showing the other set would offer settings that quietly do nothing.
-        val modePreference = findPreference<ListPreference>(Key.SERVER_MASQUE_MODE)!!
+        val modePreference = findPreference<ListPreference>(Key.SERVER_WARP_MASQUE_MODE)!!
         val quicOnly = listOf(
-            findPreference<Preference>(Key.SERVER_MASQUE_KEEPALIVE_PERIOD)!!,
-            findPreference<Preference>(Key.SERVER_MASQUE_INITIAL_PACKET_SIZE)!!,
+            findPreference<Preference>(Key.SERVER_WARP_MASQUE_KEEPALIVE_PERIOD)!!,
+            findPreference<Preference>(Key.SERVER_WARP_MASQUE_INITIAL_PACKET_SIZE)!!,
         )
         val http2Only = listOf(
-            findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_ADDRESS)!!,
-            findPreference<Preference>(Key.SERVER_MASQUE_HTTP2_PING_PERIOD)!!,
-            findPreference<Preference>(Key.SERVER_MASQUE_TCP_KEEPALIVE_PERIOD)!!,
+            findPreference<Preference>(Key.SERVER_WARP_MASQUE_HTTP2_ADDRESS)!!,
+            findPreference<Preference>(Key.SERVER_WARP_MASQUE_HTTP2_PING_PERIOD)!!,
+            findPreference<Preference>(Key.SERVER_WARP_MASQUE_TCP_KEEPALIVE_PERIOD)!!,
         )
         fun showModeOf(value: Any?) {
-            val http2 = value == MasqueBean.MODE_HTTP2
+            val http2 = value == WarpMasqueBean.MODE_HTTP2
             for (preference in quicOnly) preference.isVisible = !http2
             for (preference in http2Only) preference.isVisible = http2
         }

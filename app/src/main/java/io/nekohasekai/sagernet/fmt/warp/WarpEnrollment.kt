@@ -23,7 +23,7 @@ import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.masque.MasqueBean
+import io.nekohasekai.sagernet.fmt.warpmasque.WarpMasqueBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.getArray
@@ -83,7 +83,7 @@ private val PRIME256V1 = byteArrayOf(0x2A, 0x86.toByte(), 0x48, 0xCE.toByte(), 0
  * second call; the HTTP/2 endpoint is not, and is left empty so that the built
  * in default applies.
  */
-fun enrollMasqueDevice(deviceName: String): MasqueBean {
+fun enrollWarpMasqueDevice(deviceName: String): WarpMasqueBean {
     val keyPair = generateDeviceKey()
 
     val registration = callAPI(
@@ -124,7 +124,7 @@ fun enrollMasqueDevice(deviceName: String): MasqueBean {
     )
     val assigned = readAssignment(account)
 
-    return MasqueBean().applyDefaultValues().apply {
+    return WarpMasqueBean().applyDefaultValues().apply {
         // A v4 endpoint is reachable from a dual stack network and from a v6
         // only one alike, which is why usque prefers it too.
         serverAddress = assigned.endpointV4 ?: assigned.endpointV6
@@ -184,7 +184,7 @@ fun enrollWireGuardDevice(): WireGuardBean {
  * two beans have no ancestor that knows about them.
  */
 fun AbstractBean.warpAddresses(): String = when (this) {
-    is MasqueBean -> localAddress
+    is WarpMasqueBean -> localAddress
     is WireGuardBean -> localAddress
     else -> ""
 }

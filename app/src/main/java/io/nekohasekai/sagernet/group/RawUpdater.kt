@@ -30,8 +30,8 @@ import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.masque.isMasqueConfigJson
-import io.nekohasekai.sagernet.fmt.masque.parseMasqueConfigJson
+import io.nekohasekai.sagernet.fmt.warpmasque.isWarpMasqueConfigJson
+import io.nekohasekai.sagernet.fmt.warpmasque.parseWarpMasqueConfigJson
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
 import io.nekohasekai.sagernet.ktx.*
@@ -238,9 +238,9 @@ object RawUpdater : GroupUpdater() {
         } catch (_: Exception) {}
         // usque's config.json describes a single MASQUE device rather than a
         // proxy list, so it has to be recognized before the generic JSON parsers.
-        if (isMasqueConfigJson(text)) {
+        if (isWarpMasqueConfigJson(text)) {
             try {
-                return listOf(parseMasqueConfigJson(text))
+                return listOf(parseWarpMasqueConfigJson(text))
             } catch (_: Exception) {}
         }
         try {

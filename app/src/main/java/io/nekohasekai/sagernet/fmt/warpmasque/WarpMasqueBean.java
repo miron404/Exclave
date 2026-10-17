@@ -17,17 +17,20 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.masque;
+package io.nekohasekai.sagernet.fmt.warpmasque;
 
 import androidx.annotation.NonNull;
 
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class MasqueBean extends AbstractBean {
+import java.nio.ByteBuffer;
+
+public class WarpMasqueBean extends AbstractBean {
 
     public static final String MODE_QUIC = "quic";
     public static final String MODE_HTTP2 = "http2";
@@ -137,6 +140,28 @@ public class MasqueBean extends AbstractBean {
         }
     }
 
+    /**
+     * Whether {@code bytes} hold a profile of this kind. Profiles stored under
+     * {@code TYPE_WARP_MASQUE_BEFORE_UPSTREAM} may be either this or upstream's
+     * MASQUE, which now has that number. Upstream's starts with its version
+     * where this starts with the address, so read as this it either fails,
+     * stops short of the end, or has no transport this knows.
+     */
+    public static boolean isSerialized(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return false;
+        ByteBufferInput input = new ByteBufferInput(ByteBuffer.wrap(bytes));
+        WarpMasqueBean bean = new WarpMasqueBean();
+        try {
+            bean.deserializeFromBuffer(input);
+        } catch (KryoException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            return false;
+        }
+        return input.position() == bytes.length
+                && (MODE_QUIC.equals(bean.mode) || MODE_HTTP2.equals(bean.mode))
+                && bean.privateKey != null && !bean.privateKey.isEmpty()
+                && bean.localAddress != null && !bean.localAddress.isEmpty();
+    }
+
     @Override
     public boolean isInsecure() {
         return allowInsecure;
@@ -144,20 +169,20 @@ public class MasqueBean extends AbstractBean {
 
     @NonNull
     @Override
-    public MasqueBean clone() {
-        return KryoConverters.deserialize(new MasqueBean(), KryoConverters.serialize(this));
+    public WarpMasqueBean clone() {
+        return KryoConverters.deserialize(new WarpMasqueBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<MasqueBean> CREATOR = new CREATOR<>() {
+    public static final Creator<WarpMasqueBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
-        public MasqueBean newInstance() {
-            return new MasqueBean();
+        public WarpMasqueBean newInstance() {
+            return new WarpMasqueBean();
         }
 
         @Override
-        public MasqueBean[] newArray(int size) {
-            return new MasqueBean[size];
+        public WarpMasqueBean[] newArray(int size) {
+            return new WarpMasqueBean[size];
         }
     };
 

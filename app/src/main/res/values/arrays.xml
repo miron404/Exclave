@@ -969,12 +969,12 @@
         <item>unsafe-raw</item>
     </string-array>
 
-    <string-array name="masque_mode_entry">
-        <item>@string/masque_mode_quic</item>
-        <item>@string/masque_mode_http2</item>
+    <string-array name="warp_masque_mode_entry">
+        <item>@string/warp_masque_mode_quic</item>
+        <item>@string/warp_masque_mode_http2</item>
     </string-array>
 
-    <string-array name="masque_mode_value">
+    <string-array name="warp_masque_mode_value">
         <item>quic</item>
         <item>http2</item>
     </string-array>

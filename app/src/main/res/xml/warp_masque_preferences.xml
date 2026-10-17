@@ -20,34 +20,34 @@
             app:useSimpleSummaryProvider="true" />
         <io.nekohasekai.sagernet.widget.SimpleMenuPreference
             app:defaultValue="quic"
-            app:entries="@array/masque_mode_entry"
-            app:entryValues="@array/masque_mode_value"
+            app:entries="@array/warp_masque_mode_entry"
+            app:entryValues="@array/warp_masque_mode_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverMasqueMode"
-            app:title="@string/masque_mode"
+            app:key="serverWarpMasqueMode"
+            app:title="@string/warp_masque_mode"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
-            app:key="serverMasqueHTTP2Address"
-            app:summary="@string/masque_http2_address_sum"
-            app:title="@string/masque_http2_address" />
+            app:key="serverWarpMasqueHTTP2Address"
+            app:summary="@string/warp_masque_http2_address_sum"
+            app:title="@string/warp_masque_http2_address" />
         <EditTextPreference
             app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_baseline_vpn_key_24"
             app:key="serverPrivateKey"
-            app:title="@string/masque_private_key"
+            app:title="@string/warp_masque_private_key"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
-            app:key="serverMasqueEndpointPublicKey"
-            app:summary="@string/masque_endpoint_public_key_sum"
-            app:title="@string/masque_endpoint_public_key" />
+            app:key="serverWarpMasqueEndpointPublicKey"
+            app:summary="@string/warp_masque_endpoint_public_key_sum"
+            app:title="@string/warp_masque_endpoint_public_key" />
         <EditTextPreference
             app:dialogMessage="@string/one_per_line"
             app:icon="@drawable/ic_baseline_domain_24"
             app:key="serverLocalAddress"
-            app:summary="@string/masque_local_address_sum"
-            app:title="@string/masque_local_address" />
+            app:summary="@string/warp_masque_local_address_sum"
+            app:title="@string/warp_masque_local_address" />
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
             app:key="serverSNI"
@@ -61,26 +61,26 @@
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_cached"
-            app:key="serverMasqueKeepalivePeriod"
-            app:title="@string/masque_keepalive_period"
+            app:key="serverWarpMasqueKeepalivePeriod"
+            app:title="@string/warp_masque_keepalive_period"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_layers_24"
-            app:key="serverMasqueInitialPacketSize"
-            app:summary="@string/masque_initial_packet_size_sum"
-            app:title="@string/masque_initial_packet_size" />
+            app:key="serverWarpMasqueInitialPacketSize"
+            app:summary="@string/warp_masque_initial_packet_size_sum"
+            app:title="@string/warp_masque_initial_packet_size" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_cached"
-            app:key="serverMasqueHTTP2PingPeriod"
+            app:key="serverWarpMasqueHTTP2PingPeriod"
             app:singleLineTitle="false"
-            app:summary="@string/masque_http2_ping_period_sum"
-            app:title="@string/masque_http2_ping_period" />
+            app:summary="@string/warp_masque_http2_ping_period_sum"
+            app:title="@string/warp_masque_http2_ping_period" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_cached"
-            app:key="serverMasqueTCPKeepalivePeriod"
+            app:key="serverWarpMasqueTCPKeepalivePeriod"
             app:singleLineTitle="false"
-            app:summary="@string/masque_tcp_keepalive_period_sum"
-            app:title="@string/masque_tcp_keepalive_period" />
+            app:summary="@string/warp_masque_tcp_keepalive_period_sum"
+            app:title="@string/warp_masque_tcp_keepalive_period" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverAllowInsecure"

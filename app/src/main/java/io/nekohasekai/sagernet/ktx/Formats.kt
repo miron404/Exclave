@@ -27,7 +27,7 @@ import io.nekohasekai.sagernet.fmt.http3.parseHttp3
 import io.nekohasekai.sagernet.fmt.hysteria2.parseHysteria2
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
 import io.nekohasekai.sagernet.fmt.mieru.parseMieru
-import io.nekohasekai.sagernet.fmt.masque.parseMasque
+import io.nekohasekai.sagernet.fmt.warpmasque.parseWarpMasque
 import io.nekohasekai.sagernet.fmt.naive.parseNaive
 import io.nekohasekai.sagernet.fmt.parseBackup
 import io.nekohasekai.sagernet.fmt.shadowquic.parseShadowQUIC
@@ -130,9 +130,9 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             runCatching {
                 entities.add(parseShadowQUIC(this))
             }
-        } else if (startsWith("masque://", ignoreCase = true)) {
+        } else if (startsWith("warp-masque://", ignoreCase = true) || startsWith("masque://", ignoreCase = true)) {
             runCatching {
-                entities.add(parseMasque(this))
+                entities.add(parseWarpMasque(this))
             }
         }
     }

@@ -700,8 +700,8 @@ public class V2RayConfig {
                     return SnellOutboundConfigurationObject.class;
                 case "shadowquic":
                     return ShadowQUICOutboundConfigurationObject.class;
-                case "masque":
-                    return MasqueOutboundConfigurationObject.class;
+                case "warp-masque":
+                    return WarpMasqueOutboundConfigurationObject.class;
             }
             return null;
         }
@@ -1052,7 +1052,7 @@ public class V2RayConfig {
 
     }
 
-    public static class MasqueOutboundConfigurationObject implements OutboundConfigurationObject {
+    public static class WarpMasqueOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public String address;
         public Integer port;

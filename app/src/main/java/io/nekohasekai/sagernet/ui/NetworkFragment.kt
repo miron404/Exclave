@@ -33,7 +33,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.databinding.LayoutNetworkBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.warp.enrollMasqueDevice
+import io.nekohasekai.sagernet.fmt.warp.enrollWarpMasqueDevice
 import io.nekohasekai.sagernet.fmt.warp.enrollWireGuardDevice
 import io.nekohasekai.sagernet.fmt.warp.warpAddresses
 import io.nekohasekai.sagernet.ktx.*
@@ -66,7 +66,7 @@ class NetworkFragment : NamedFragment(R.layout.layout_network) {
         val warpButtons = listOf(binding.generateWarpMasque, binding.generateWarpWireGuard)
         binding.generateWarpMasque.setOnClickListener { clicked ->
             askToRegister(warpButtons, clicked as Button, R.string.warp_profile_masque) {
-                enrollMasqueDevice(Build.MODEL)
+                enrollWarpMasqueDevice(Build.MODEL)
             }
         }
         binding.generateWarpWireGuard.setOnClickListener { clicked ->

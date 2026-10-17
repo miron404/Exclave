@@ -17,7 +17,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.masque
+package io.nekohasekai.sagernet.fmt.warpmasque
 
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
@@ -35,9 +35,12 @@ import kotlin.io.encoding.Base64
  * very same parser accept a config file pasted as is.
  */
 
-private const val MASQUE_SCHEME = "masque://"
+private const val WARP_MASQUE_SCHEME = "warp-masque://"
 
-fun isMasqueConfigJson(text: String): Boolean {
+/** The scheme links had before upstream added its own MASQUE. Still read. */
+private const val WARP_MASQUE_SCHEME_BEFORE_UPSTREAM = "masque://"
+
+fun isWarpMasqueConfigJson(text: String): Boolean {
     val trimmed = text.trim()
     if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) return false
     val json = runCatching { parseJson(trimmed) }.getOrNull() ?: return false
@@ -47,12 +50,12 @@ fun isMasqueConfigJson(text: String): Boolean {
         (obj.getString("endpoint_v4") != null || obj.getString("endpoint_v6") != null)
 }
 
-fun parseMasque(text: String): MasqueBean {
+fun parseWarpMasque(text: String): WarpMasqueBean {
     val trimmed = text.trim()
-    if (!trimmed.startsWith(MASQUE_SCHEME, ignoreCase = true)) {
-        return parseMasqueConfigJson(trimmed)
-    }
-    var payload = trimmed.substring(MASQUE_SCHEME.length)
+    val scheme = listOf(WARP_MASQUE_SCHEME, WARP_MASQUE_SCHEME_BEFORE_UPSTREAM).firstOrNull {
+        trimmed.startsWith(it, ignoreCase = true)
+    } ?: return parseWarpMasqueConfigJson(trimmed)
+    var payload = trimmed.substring(scheme.length)
     var name = ""
     val fragment = payload.indexOf('#')
     if (fragment != -1) {
@@ -63,7 +66,7 @@ fun parseMasque(text: String): MasqueBean {
     val json = String(
         Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(payload)
     )
-    return parseMasqueConfigJson(json).apply {
+    return parseWarpMasqueConfigJson(json).apply {
         if (name.isNotEmpty()) {
             this.name = name
         }
@@ -74,10 +77,10 @@ fun parseMasque(text: String): MasqueBean {
  * Reads a usque `config.json`. `endpoint_v4` is preferred over `endpoint_v6`
  * because a v4 endpoint works on dual stack and v6 only networks alike.
  */
-fun parseMasqueConfigJson(text: String): MasqueBean {
+fun parseWarpMasqueConfigJson(text: String): WarpMasqueBean {
     val json = runCatching { parseJson(text.trim()) }.getOrNull()?.takeIf { it.isJsonObject }?.asJsonObject
         ?: error("invalid masque configuration")
-    return MasqueBean().applyDefaultValues().apply {
+    return WarpMasqueBean().applyDefaultValues().apply {
         json.getString("name")?.takeIf { it.isNotEmpty() }?.also { name = it }
         serverAddress = json.getString("endpoint_v4")?.takeIf { it.isNotEmpty() }
             ?: json.getString("endpoint_v6")?.takeIf { it.isNotEmpty() }
@@ -96,8 +99,8 @@ fun parseMasqueConfigJson(text: String): MasqueBean {
         if (localAddress.isEmpty()) error("missing assigned address")
         json.getString("sni")?.takeIf { it.isNotEmpty() }?.also { sni = it }
         when (json.getString("mode")) {
-            MasqueBean.MODE_HTTP2 -> mode = MasqueBean.MODE_HTTP2
-            MasqueBean.MODE_QUIC -> mode = MasqueBean.MODE_QUIC
+            WarpMasqueBean.MODE_HTTP2 -> mode = WarpMasqueBean.MODE_HTTP2
+            WarpMasqueBean.MODE_QUIC -> mode = WarpMasqueBean.MODE_QUIC
         }
         json.getInt("mtu")?.takeIf { it > 0 }?.also { mtu = it }
         json.getInt("keepalive_period")?.takeIf { it >= 0 }?.also { keepalivePeriod = it }
@@ -111,10 +114,10 @@ fun parseMasqueConfigJson(text: String): MasqueBean {
     }
 }
 
-fun MasqueBean.toUri(): String {
+fun WarpMasqueBean.toUri(): String {
     val payload = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
         .encode(toConfigJson().toString().toByteArray())
-    val builder = StringBuilder(MASQUE_SCHEME).append(payload)
+    val builder = StringBuilder(WARP_MASQUE_SCHEME).append(payload)
     if (name.isNotEmpty()) {
         builder.append('#').append(java.net.URLEncoder.encode(name, "UTF-8"))
     }
@@ -125,7 +128,7 @@ fun MasqueBean.toUri(): String {
  * Renders the profile back into the usque `config.json` shape, so an exported
  * link can also be fed to usque itself.
  */
-fun MasqueBean.toConfigJson(): JsonObject = JsonObject().apply {
+fun WarpMasqueBean.toConfigJson(): JsonObject = JsonObject().apply {
     addProperty("private_key", privateKey)
     if (serverAddress.contains(":")) {
         addProperty("endpoint_v6", serverAddress)
@@ -150,10 +153,10 @@ fun MasqueBean.toConfigJson(): JsonObject = JsonObject().apply {
     if (serverPort != 443) {
         addProperty("port", serverPort)
     }
-    if (sni != MasqueBean.DEFAULT_SNI) {
+    if (sni != WarpMasqueBean.DEFAULT_SNI) {
         addProperty("sni", sni)
     }
-    if (mode != MasqueBean.MODE_QUIC) {
+    if (mode != WarpMasqueBean.MODE_QUIC) {
         addProperty("mode", mode)
     }
     if (mtu != 1280) {
@@ -168,7 +171,7 @@ fun MasqueBean.toConfigJson(): JsonObject = JsonObject().apply {
     if (http2PingPeriod != 0) {
         addProperty("http2_ping_period", http2PingPeriod)
     }
-    if (tcpKeepalivePeriod != MasqueBean.DEFAULT_TCP_KEEPALIVE_PERIOD) {
+    if (tcpKeepalivePeriod != WarpMasqueBean.DEFAULT_TCP_KEEPALIVE_PERIOD) {
         addProperty("tcp_keepalive_period", tcpKeepalivePeriod)
     }
     if (allowInsecure) {
