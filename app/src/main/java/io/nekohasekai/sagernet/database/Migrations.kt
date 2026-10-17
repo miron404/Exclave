@@ -107,6 +107,22 @@ object SagerDatabase_Migration_11_12 : Migration(11, 12) {
     }
 }
 
+/**
+ * Until upstream added its own MASQUE, this fork kept WARP MASQUE profiles as
+ * type 31 in the `masqueBean` column, which is exactly what upstream's version
+ * 38 then took for its MASQUE. A database at 38 written by this fork therefore
+ * has the same schema as upstream's, but every type 31 row in it is WARP
+ * MASQUE, and moves to the type and column of its own.
+ */
+object SagerDatabase_Migration_38_1001 : Migration(38, 1001) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""ALTER TABLE `proxy_entities` ADD COLUMN `warpMasqueBean` BLOB""")
+        database.execSQL(
+            """UPDATE `proxy_entities` SET `type` = ${ProxyEntity.TYPE_WARP_MASQUE}, `warpMasqueBean` = `masqueBean`, `masqueBean` = NULL WHERE `type` = ${ProxyEntity.TYPE_WARP_MASQUE_BEFORE_UPSTREAM}"""
+        )
+    }
+}
+
 @DeleteTable(
     tableName = "KeyValuePair"
 )

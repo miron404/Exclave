@@ -5,6 +5,14 @@ over TCP+TLS/HTTP2. Written against
 [usque](https://github.com/Diniboy1123/usque) (MIT), which documented
 Cloudflare's departures from the RFC.
 
+Upstream has since added a MASQUE protocol of its own, a standard RFC 9484
+client for self hosted servers. It cannot reach WARP: it asks for
+`connect-ip` where Cloudflare wants `cf-connect-ip`, uses extended CONNECT over
+HTTP/2 where Cloudflare wants a plain CONNECT with `cf-connect-proto`, does not
+send the old H3 datagram setting, and waits for the server to assign addresses,
+which WARP hands out at enrollment instead. So the two live side by side, and
+this one is named WARP MASQUE throughout; see "Names" below.
+
 This file is the handover note. Read the traps section before changing the
 packet path: most of them cost a build-and-test cycle on a device to find, and
 none of them fail at compile time.
@@ -17,7 +25,7 @@ Three repositories, all on branch `masque`, except the app which is on
 | Repository | What it holds |
 | --- | --- |
 | `miron404/Exclave` | the app: profile, config builder, UI, CI |
-| `miron404/exclave-core` | the outbound: `proxy/masque`, `infra/conf/v4/masque.go` |
+| `miron404/exclave-core` | the outbound: `proxy/warpmasque`, `infra/conf/v4/warpmasque.go` |
 | `miron404/connect-ip-go` | two fixes, described below |
 
 The core is pinned as a submodule at `library/core/deps/exclave-core` and
@@ -39,8 +47,49 @@ instead and is required normally.
 ## The app side
 
 Wired the way any protocol is here; `git show 3be5bc44` (Snell) is the template.
-`MasqueBean` holds the device material. Pasting a usque `config.json`, or a
-`masque://` link (the same document, base64url), creates a profile.
+`WarpMasqueBean` holds the device material. Pasting a usque `config.json`, or a
+`warp-masque://` link (the same document, base64url), creates a profile. Links
+from before the rename, `masque://`, are still read.
+
+### Names
+
+Upstream's MASQUE arrived under every name this fork had used: type 31, the
+`masqueBean` column, database version 38, `fmt.masque`, the settings screen and
+its XML, the `action_new_masque` menu item, `proxy/masque` and the `masque`
+protocol in the core. Upstream keeps all of those. This fork's are:
+
+| | Upstream MASQUE | WARP MASQUE |
+| --- | --- | --- |
+| Profile type | `TYPE_MASQUE = 31` | `TYPE_WARP_MASQUE = 1000` |
+| Column | `masqueBean` | `warpMasqueBean` |
+| Bean | `fmt.masque.MASQUEBean` | `fmt.warpmasque.WarpMasqueBean` |
+| Screen | `MASQUESettingsActivity`, `masque_preferences.xml` | `WarpMasqueSettingsActivity`, `warp_masque_preferences.xml` |
+| Core | `proxy/masque`, protocol `masque` | `proxy/warpmasque`, protocol `warp-masque` |
+
+The type number is far above upstream's, which are handed out one by one, so a
+protocol upstream adds never takes it.
+
+**The database version** follows the same idea. This fork's versions start at
+1001: a fork version is 1000 plus the number of schema changes made on top of
+upstream's 38, upstream's own counted in once they are merged. Upstream's
+versions are never used again, so its numbers can never collide with the
+fork's. When upstream bumps its version, keep the fork's `version` line,
+keep upstream's `AutoMigration` entry, which costs nothing, and add a
+migration from the fork's current version to the next one that does what
+upstream's does. Room's path from an old database goes through the largest
+step it can, so a database at 38 takes `38 -> 1001` and never upstream's
+`38 -> 39`.
+
+`SagerDatabase_Migration_38_1001` moves every type 31 row to type 1000 and its
+data to the new column. At 38 every such row is WARP MASQUE, because this
+fork's 38 never had upstream's MASQUE. Backups made before the rename still say
+31; `ProxyEntity.putByteArray` recognises this fork's format by trying to read
+it (`WarpMasqueBean.isSerialized`) and moves those too, leaving upstream's
+alone.
+
+Room exports the schema of the current version to `app/schemas` at build time,
+and only CI builds here, so `1001.json` is not committed yet. An
+`AutoMigration` from 1001 would need it; a manual `Migration` does not.
 
 A profile can also be made from scratch: "Cloudflare WARP" in the tools tab
 registers a device and adds the profile. `fmt/warp/WarpEnrollment.kt` repeats
@@ -77,7 +126,7 @@ network access in the app, so a device can be registered from a network where
 
 ## The outbound
 
-`proxy/masque` mirrors `proxy/wireguard`, which is the closest thing in the
+`proxy/warpmasque` mirrors `proxy/wireguard`, which is the closest thing in the
 tree: both carry IP packets on a gVisor stack. It reuses
 `proxy/wireguard/netstack` rather than bringing its own, which keeps gvisor at
 one version.
@@ -277,8 +326,10 @@ installs beside the original), `buildSrc/Helpers.kt` and the two workflows.
 **exclave-core.** Merge upstream into the fork's `masque` branch. Only two lines
 are in shared files, so conflicts are unlikely: the entry in the outbound loader
 map in `infra/conf/v4/v2ray.go` and the import in `main/distro/all/all.go`.
-Everything else is `proxy/masque`, `infra/conf/v4/masque.go`, and the netstack
-close fix. Then move the submodule and `go mod tidy` in `library/core`.
+Everything else is `proxy/warpmasque`, `infra/conf/v4/warpmasque.go`, and the
+netstack close fix. `proxy/http/capsule.go` is the exception: CONNECT-UDP was
+rewritten on both sides, and the merged one is upstream's tunnel per
+destination with this fork's buffered reads and batched writes. Then move the submodule and `go mod tidy` in `library/core`.
 
 What does conflict, every time, is `go.sum` on both sides, and
 `library/core/go.mod` in the app. Take upstream's dependency versions, keep the

@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.toUri
+import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.toUri
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
@@ -109,6 +110,7 @@ data class ProxyEntity(
     var shadowquicBean: ShadowQUICBean? = null,
     var trustTunnelBean: TrustTunnelBean? = null,
     var snellBean: SnellBean? = null,
+    var masqueBean: MASQUEBean? = null,
     var warpMasqueBean: WarpMasqueBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
@@ -135,6 +137,8 @@ data class ProxyEntity(
         const val TYPE_SHADOWQUIC = 28
         const val TYPE_TRUSTTUNNEL = 29
         const val TYPE_SNELL = 30
+        const val TYPE_MASQUE = 31
+
         // Far above upstream's numbers, which are handed out one by one, so
         // that a protocol upstream adds never lands on it.
         const val TYPE_WARP_MASQUE = 1000
@@ -143,7 +147,8 @@ data class ProxyEntity(
          * What this fork stored WARP MASQUE profiles as before upstream added
          * its own MASQUE and took the number. Backups made then still carry it.
          */
-        const val TYPE_WARP_MASQUE_BEFORE_UPSTREAM = 31
+        const val TYPE_WARP_MASQUE_BEFORE_UPSTREAM = TYPE_MASQUE
+
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
         const val TYPE_CONFIG = 13
@@ -240,6 +245,7 @@ data class ProxyEntity(
             TYPE_SHADOWQUIC -> shadowquicBean = KryoConverters.shadowquicDeserialize(byteArray)
             TYPE_TRUSTTUNNEL -> trustTunnelBean = KryoConverters.trusttunnelDeserialize(byteArray)
             TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
+            TYPE_MASQUE -> masqueBean = KryoConverters.masqueDeserialize(byteArray)
             TYPE_WARP_MASQUE -> warpMasqueBean = KryoConverters.warpMasqueDeserialize(byteArray)
 
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
@@ -268,6 +274,7 @@ data class ProxyEntity(
         TYPE_SHADOWQUIC -> "ShadowQUIC"
         TYPE_TRUSTTUNNEL -> "TrustTunnel"
         TYPE_SNELL -> snellBean!!.protocolName()
+        TYPE_MASQUE -> "MASQUE"
         TYPE_WARP_MASQUE -> "WARP MASQUE"
 
         TYPE_CHAIN -> chainName
@@ -300,6 +307,7 @@ data class ProxyEntity(
             TYPE_SHADOWQUIC -> shadowquicBean
             TYPE_TRUSTTUNNEL -> trustTunnelBean
             TYPE_SNELL -> snellBean
+            TYPE_MASQUE -> masqueBean
             TYPE_WARP_MASQUE -> warpMasqueBean
 
             TYPE_CONFIG -> configBean
@@ -319,7 +327,7 @@ data class ProxyEntity(
 
     fun hasShareLink(): Boolean {
         return when (type) {
-            TYPE_SSH, TYPE_WG, TYPE_SNELL -> false
+            TYPE_SSH, TYPE_WG, TYPE_SNELL, TYPE_MASQUE -> false
             TYPE_CONFIG, TYPE_CHAIN, TYPE_BALANCER -> false
             else -> true
         }
@@ -404,6 +412,7 @@ data class ProxyEntity(
         shadowquicBean = null
         trustTunnelBean = null
         snellBean = null
+        masqueBean = null
         warpMasqueBean = null
 
         configBean = null
@@ -487,6 +496,10 @@ data class ProxyEntity(
                 type = TYPE_SNELL
                 snellBean = bean
             }
+            is MASQUEBean -> {
+                type = TYPE_MASQUE
+                masqueBean = bean
+            }
             is WarpMasqueBean -> {
                 type = TYPE_WARP_MASQUE
                 warpMasqueBean = bean
@@ -530,6 +543,7 @@ data class ProxyEntity(
             TYPE_SHADOWQUIC -> ShadowQUICSettingsActivity::class.java
             TYPE_TRUSTTUNNEL -> TrustTunnelSettingsActivity::class.java
             TYPE_SNELL -> SnellSettingsActivity::class.java
+            TYPE_MASQUE -> MASQUESettingsActivity::class.java
             TYPE_WARP_MASQUE -> WarpMasqueSettingsActivity::class.java
 
             TYPE_CONFIG -> ConfigSettingsActivity::class.java

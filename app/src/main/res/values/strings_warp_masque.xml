@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The strings this fork adds for MASQUE. They live apart from strings.xml so
+  The strings this fork adds for WARP MASQUE. They live apart from strings.xml so
   that upstream's translation traffic, which rewrites that file wholesale,
   never collides with them.
 -->
 <resources>
-    <string name="action_warp_masque" translatable="false">MASQUE</string>
+    <string name="action_warp_masque" translatable="false">WARP MASQUE</string>
     <string name="warp_masque_mode">Transport</string>
     <string name="warp_masque_mode_quic" translatable="false">QUIC (HTTP/3)</string>
     <string name="warp_masque_mode_http2" translatable="false">HTTP/2</string>
