@@ -77,7 +77,11 @@ jobs:
           path: app/build/outputs/apk/oss/debug
       # Room writes the schema of the current database version here at build
       # time, and nothing else in this fork builds the app, so this is where
-      # a new version's schema comes from to be committed.
+      # a new version's schema comes from to be committed. The schemas are not
+      # a declared output of KSP, so a run taken from the build cache writes
+      # none: KSP is run again for them.
+      - name: Export Database Schemas
+        run: ./gradlew :app:kspOssDebugKotlin --rerun
       - name: Upload Database Schemas
         uses: actions/upload-artifact@v7
         with:
