@@ -151,6 +151,7 @@
                 <data android:scheme="tt" />
                 <data android:scheme="sq" />
                 <data android:scheme="shadowquic" />
+                <data android:scheme="warp-masque" />
             </intent-filter>
 
             <meta-data

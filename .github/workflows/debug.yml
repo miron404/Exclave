@@ -75,3 +75,11 @@ jobs:
         with:
           name: APKs
           path: app/build/outputs/apk/oss/debug
+      # Room writes the schema of the current database version here at build
+      # time, and nothing else in this fork builds the app, so this is where
+      # a new version's schema comes from to be committed.
+      - name: Upload Database Schemas
+        uses: actions/upload-artifact@v7
+        with:
+          name: Schemas
+          path: app/schemas
