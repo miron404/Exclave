@@ -20,6 +20,8 @@
 package io.nekohasekai.sagernet.bg.test
 
 import android.net.Network
+import android.os.Build
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.bg.LocalResolver
 import io.nekohasekai.sagernet.bg.proto.V2RayInstance
@@ -62,7 +64,27 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
     }
 
     @Volatile
-    override var underlyingNetwork: Network? = null
+    private var listenedNetwork: Network? = null
+
+    companion object {
+        /** The network the latest test to listen heard of. */
+        @Volatile
+        private var latestNetwork: Network? = null
+    }
+
+    // libexclavecore makes the system dialer once, with the resolver of the
+    // first test that asks for one, and every later test in this process dials
+    // through it. So a test that is over still answers lookups, and has to
+    // answer them on the network the running tests see, not the one it last
+    // heard of before a network change.
+    override var underlyingNetwork: Network?
+        get() = listenedNetwork ?: latestNetwork ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SagerNet.connectivity.activeNetwork
+        } else null
+        set(value) {
+            listenedNetwork = value
+            latestNetwork = value
+        }
 
     override suspend fun init() {
         super.init()
@@ -76,6 +98,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
     override fun close() {
         runOnDefaultDispatcher {
             DefaultNetworkListener.stop(this)
+            listenedNetwork = null
         }
         super.close()
     }
