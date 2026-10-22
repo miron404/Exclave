@@ -287,26 +287,36 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                     outbound.getString("password")?.also {
                         v2rayBean.password = it
                     }
-                    if (v2rayBean.security == "tls") {
-                        outbound.getInt("version")?.takeIf { it == 3 }?.also {
-                            return listOf(Http3Bean().apply {
-                                serverAddress = v2rayBean.serverAddress
-                                serverPort = v2rayBean.serverPort
-                                name = v2rayBean.name
-                                username = v2rayBean.username
-                                password = v2rayBean.password
-                                sni = v2rayBean.sni
-                                certificates = v2rayBean.certificates
-                                pinnedPeerCertificatePublicKeySha256 = v2rayBean.pinnedPeerCertificatePublicKeySha256
-                                pinnedPeerCertificateSha256 = v2rayBean.pinnedPeerCertificateSha256
-                                allowInsecure = v2rayBean.allowInsecure
-                                /*echEnabled = v2rayBean.echEnabled
-                                echConfigList = v2rayBean.echConfigList
-                                echQueryName = v2rayBean.echQueryName*/
-                                mtlsCertificate = v2rayBean.mtlsCertificate
-                                mtlsCertificatePrivateKey = v2rayBean.mtlsCertificatePrivateKey
-                            })
+                    val version = outbound.getInt("version")
+                    when (version) {
+                        0, 1, 2, 3 -> {
+                            // sing-box 1.15 with always-enabled CONNECT-UDP support
+                            v2rayBean.connectUDP = true
                         }
+                        null -> {} // can't tell if there is CONNECT-UDP support or not
+                        else -> return listOf()
+                    }
+                    if (version == 3 && v2rayBean.security != "tls") {
+                        return listOf()
+                    }
+                    if (version == 3) {
+                        return listOf(Http3Bean().apply {
+                            serverAddress = v2rayBean.serverAddress
+                            serverPort = v2rayBean.serverPort
+                            name = v2rayBean.name
+                            username = v2rayBean.username
+                            password = v2rayBean.password
+                            sni = v2rayBean.sni
+                            certificates = v2rayBean.certificates
+                            pinnedPeerCertificatePublicKeySha256 = v2rayBean.pinnedPeerCertificatePublicKeySha256
+                            pinnedPeerCertificateSha256 = v2rayBean.pinnedPeerCertificateSha256
+                            allowInsecure = v2rayBean.allowInsecure
+                            /*echEnabled = v2rayBean.echEnabled
+                            echConfigList = v2rayBean.echConfigList
+                            echQueryName = v2rayBean.echQueryName*/
+                            mtlsCertificate = v2rayBean.mtlsCertificate
+                            mtlsCertificatePrivateKey = v2rayBean.mtlsCertificatePrivateKey
+                        })
                     }
                 }
                 "shadowsocks" -> {
@@ -1026,7 +1036,9 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
             }
             return beanList
         }
-        else -> return listOf()
+        else -> {
+            return listOf()
+        }
     }
 }
 
@@ -1111,9 +1123,9 @@ fun parseSingBoxEndpoint(endpoint: JsonObject): List<AbstractBean> {
                     }.string + it
                 }
                 (endpoint.getInt("version") ?: 0).also {
-                    httpVersion = when (it) {
-                        0, 3 -> 3
-                        1, 2 -> it
+                    http3 = when (it) {
+                        0, 3 -> true
+                        1, 2 -> false
                         else -> return listOf()
                     }
                 }
@@ -1123,7 +1135,7 @@ fun parseSingBoxEndpoint(endpoint: JsonObject): List<AbstractBean> {
                 }
                 endpoint.getObject("tls")?.also { tls ->
                     (tls.getBoolean("enabled"))?.also { enabled ->
-                        if (httpVersion != 1 && !enabled) {
+                        if (http3 && !enabled) {
                             return listOf()
                         }
                         security = if (enabled) "tls" else ""

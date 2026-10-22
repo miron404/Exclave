@@ -215,7 +215,7 @@ fun Project.setupApp() {
             minSdk = 24
         }
         tasks.register("downloadAssets") {
-            downloadAssets(update = false)
+            downloadAssets()
         }
         tasks.register("updateAssets") {
             downloadRootCAList()
