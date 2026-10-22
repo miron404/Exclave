@@ -114,7 +114,10 @@ data class ProxyEntity(
     var warpMasqueBean: WarpMasqueBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
-    var balancerBean: BalancerBean? = null
+    var balancerBean: BalancerBean? = null,
+    // Bytes per second the latest speed test measured; 0 for none, and
+    // SPEED_FAILED for a test that got nothing through.
+    @ColumnInfo(defaultValue = "0") var speed: Long = 0L,
 ) : Serializable() {
 
     companion object {
@@ -148,6 +151,9 @@ data class ProxyEntity(
          * its own MASQUE and took the number. Backups made then still carry it.
          */
         const val TYPE_WARP_MASQUE_BEFORE_UPSTREAM = TYPE_MASQUE
+
+        /** The speed of a profile whose speed test got nothing through. */
+        const val SPEED_FAILED = -1L
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14

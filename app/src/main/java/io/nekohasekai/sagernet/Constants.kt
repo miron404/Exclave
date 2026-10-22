@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet
 
 const val CONNECTION_TEST_URL = "https://www.google.com/generate_204"
+const val SPEED_TEST_URL = "https://speed.cloudflare.com/__down?bytes=100000000"
 
 object Key {
 
@@ -89,6 +90,12 @@ object Key {
     const val CONNECTION_TEST_URL = "connectionTestURL"
     const val CONNECTION_TEST_CONCURRENCY = "connectionTestConcurrency"
     const val CONNECTION_TEST_TIMEOUT = "connectionTestTimeout"
+    const val SPEED_TEST_URL = "speedTestURL"
+    const val SPEED_TEST_MAX_SIZE = "speedTestMaxSize"
+    const val SPEED_TEST_DURATION = "speedTestDuration"
+    const val SPEED_TEST_CONNECT_TIMEOUT = "speedTestConnectTimeout"
+    const val SPEED_TEST_CONCURRENCY = "speedTestConcurrency"
+    const val SPEED_TEST_CONNECTIONS = "speedTestConnections"
     const val PROBE_URL = "probeUrl"
     const val PROBE_INTERVAL = "probeInterval"
 
@@ -404,6 +411,9 @@ object GroupOrder {
     const val ORIGIN = 0
     const val BY_NAME = 1
     const val BY_DELAY = 2
+
+    // Far above upstream's numbers, like the fork's protocol types.
+    const val BY_SPEED = 1000
 }
 
 object Action {

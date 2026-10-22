@@ -30,4 +30,7 @@
                 android:title="@string/action_export_clipboard" />
         </menu>
     </item>
+    <item
+        android:id="@+id/action_speed_test"
+        android:title="@string/speed_test" />
 </menu>

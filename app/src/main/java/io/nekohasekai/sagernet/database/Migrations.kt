@@ -123,6 +123,13 @@ object SagerDatabase_Migration_38_1001 : Migration(38, 1001) {
     }
 }
 
+/** Adds the result of the speed test. */
+object SagerDatabase_Migration_1001_1002 : Migration(1001, 1002) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""ALTER TABLE `proxy_entities` ADD COLUMN `speed` INTEGER NOT NULL DEFAULT 0""")
+    }
+}
+
 @DeleteTable(
     tableName = "KeyValuePair"
 )

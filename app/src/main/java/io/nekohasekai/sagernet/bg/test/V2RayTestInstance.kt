@@ -37,7 +37,7 @@ import libexclavecore.Libexclavecore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
-class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int, val protectPath: String = "") : V2RayInstance(
+open class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int, val protectPath: String = "") : V2RayInstance(
     profile,
 ), LocalResolver {
     lateinit var continuation: Continuation<Int>

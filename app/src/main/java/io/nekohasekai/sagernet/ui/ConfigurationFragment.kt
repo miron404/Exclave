@@ -25,6 +25,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -570,10 +574,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
                     val toClear = mutableListOf<ProxyEntity>()
                     if (profiles.isNotEmpty()) for (profile in profiles) {
-                        if (profile.status != 0) {
+                        if (profile.status != 0 || profile.speed != 0L) {
                             profile.status = 0
                             profile.ping = 0
                             profile.error = null
+                            profile.speed = 0L
                             toClear.add(profile)
                         }
                     }
@@ -684,6 +689,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_connection_url_test -> {
                 urlTest()
+            }
+            R.id.action_connection_speed_test -> {
+                speedTest { SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId()) }
             }
             R.id.action_update_subscription -> {
                 runOnDefaultDispatcher {
@@ -917,6 +925,12 @@ class ConfigurationFragment @JvmOverloads constructor(
             runOnDefaultDispatcher {
                 GroupManager.postReload(DataStore.currentGroupId())
             }
+        }
+    }
+
+    fun speedTest(load: suspend () -> List<ProxyEntity>) {
+        SpeedTestDialog(this).start {
+            load().filter { !it.useBrowserForwarder() }
         }
     }
 
@@ -1154,6 +1168,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             val origin = menu.findItem(R.id.action_order_origin)
             val byName = menu.findItem(R.id.action_order_by_name)
             val byDelay = menu.findItem(R.id.action_order_by_delay)
+            val bySpeed = menu.findItem(R.id.action_order_by_speed)
             when (proxyGroup.order) {
                 GroupOrder.ORIGIN -> {
                     origin.isChecked = true
@@ -1163,6 +1178,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
                 GroupOrder.BY_DELAY -> {
                     byDelay.isChecked = true
+                }
+                GroupOrder.BY_SPEED -> {
+                    bySpeed.isChecked = true
                 }
             }
 
@@ -1187,6 +1205,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             byDelay.setOnMenuItemClickListener {
                 it.isChecked = true
                 updateTo(GroupOrder.BY_DELAY)
+                true
+            }
+            bySpeed.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.BY_SPEED)
                 true
             }
         }
@@ -1554,6 +1577,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                     GroupOrder.BY_DELAY -> {
                         newProfiles = newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
                     }
+                    GroupOrder.BY_SPEED -> {
+                        newProfiles = newProfiles.sortedByDescending { it.speed }
+                    }
                 }
 
                 configurationList.clear()
@@ -1769,6 +1795,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
 
+                appendSpeed(proxyEntity)
                 profileStatus.isClickable = proxyEntity.status == 3
 
                 if (!parent.select) {
@@ -1843,6 +1870,24 @@ class ConfigurationFragment @JvmOverloads constructor(
                     } else {
                         profileStatus.text = ""
                     }
+                    appendSpeed(entity)
+                }
+            }
+
+            /** Puts the latest speed test after whatever the status shows. */
+            fun appendSpeed(proxyEntity: ProxyEntity) {
+                val (text, colour) = when {
+                    proxyEntity.speed > 0L -> requireContext().formatSpeed(proxyEntity.speed) to R.color.material_green_500
+                    proxyEntity.speed == ProxyEntity.SPEED_FAILED -> getString(R.string.speed_test_failed) to R.color.material_red_500
+                    else -> return
+                }
+                val speed = SpannableString(text).apply {
+                    setSpan(ForegroundColorSpan(requireContext().getColour(colour)), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                profileStatus.text = if (profileStatus.text.isNullOrEmpty()) {
+                    speed
+                } else {
+                    TextUtils.concat(profileStatus.text, " · ", speed)
                 }
             }
 
@@ -1882,6 +1927,12 @@ class ConfigurationFragment @JvmOverloads constructor(
                             )
                         }
                         R.id.action_export_backup_clipboard -> export(entity.requireBean().exportBackup())
+                        R.id.action_speed_test -> {
+                            val id = entity.id
+                            (parentFragment as ConfigurationFragment).speedTest {
+                                listOfNotNull(SagerDatabase.proxyDao.getById(id))
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Logs.w(e)

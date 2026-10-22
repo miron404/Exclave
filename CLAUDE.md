@@ -13,3 +13,8 @@ filesystem replace in `library/core/go.mod`. Initialise it before building:
 ```
 git submodule update --init library/core/deps/exclave-core
 ```
+
+The core build binds two packages: libexclavecore, and the fork's
+`common/speedtest` from the core submodule, which the speed test calls. Keep
+both in `library/core/{build,debug}.{sh,bat}` when merging upstream changes to
+those scripts.

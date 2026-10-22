@@ -228,6 +228,19 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         mtu.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         findPreference<EditTextPreference>(Key.CONNECTION_TEST_CONCURRENCY)!!.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         findPreference<EditTextPreference>(Key.CONNECTION_TEST_TIMEOUT)!!.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        for (key in listOf(Key.SPEED_TEST_MAX_SIZE, Key.SPEED_TEST_DURATION, Key.SPEED_TEST_CONNECT_TIMEOUT, Key.SPEED_TEST_CONCURRENCY, Key.SPEED_TEST_CONNECTIONS)) {
+            findPreference<EditTextPreference>(key)!!.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        // The value, and what it does to the result, which is not obvious.
+        for ((key, summary) in listOf(
+            Key.SPEED_TEST_DURATION to R.string.speed_test_duration_summary,
+            Key.SPEED_TEST_CONCURRENCY to R.string.speed_test_concurrency_summary,
+            Key.SPEED_TEST_CONNECTIONS to R.string.speed_test_connections_summary,
+        )) {
+            findPreference<EditTextPreference>(key)!!.summaryProvider = Preference.SummaryProvider<EditTextPreference> {
+                getString(summary, it.text.orEmpty())
+            }
+        }
         mtu.onPreferenceChangeListener = reloadListener
         enableVPNInterfaceIPv6Address.isEnabled = serviceMode.value == MODE_VPN
         enableVPNInterfaceIPv6Address.onPreferenceChangeListener = reloadListener

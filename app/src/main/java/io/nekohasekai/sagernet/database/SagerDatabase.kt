@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
     // which count up one by one: a fork version is 1000 plus how many schema
     // changes the fork has made on top of upstream 38, upstream's own among
     // them once merged. See SagerDatabase_Migration_38_1001.
-    version = 1001,
+    version = 1002,
     autoMigrations = [AutoMigration(
         from = 12,
         to = 14,
@@ -138,6 +138,7 @@ abstract class SagerDatabase : RoomDatabase() {
                     SagerDatabase_Migration_10_11,
                     SagerDatabase_Migration_11_12,
                     SagerDatabase_Migration_38_1001,
+                    SagerDatabase_Migration_1001_1002,
                 )
                 .fallbackToDestructiveMigrationOnDowngrade()
                 .allowMainThreadQueries()

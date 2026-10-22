@@ -238,6 +238,39 @@
             app:key="connectionTestTimeout"
             app:title="@string/connection_test_timeout_ms"
             app:useSimpleSummaryProvider="true" />
+        <io.nekohasekai.sagernet.widget.LinkPreference
+            app:defaultValue="https://speed.cloudflare.com/__down?bytes=100000000"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestURL"
+            app:title="@string/speed_test_url"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="25"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestMaxSize"
+            app:title="@string/speed_test_max_size"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="10"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestDuration"
+            app:title="@string/speed_test_duration" />
+        <EditTextPreference
+            app:defaultValue="10000"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestConnectTimeout"
+            app:title="@string/speed_test_connect_timeout"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="1"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestConcurrency"
+            app:title="@string/speed_test_concurrency" />
+        <EditTextPreference
+            app:defaultValue="1"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="speedTestConnections"
+            app:title="@string/speed_test_connections" />
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
             app:key="realityDisableX25519Mlkem768"

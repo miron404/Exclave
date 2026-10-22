@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The strings of this fork's speed test. They live apart from strings.xml so
+  that upstream's translation traffic, which rewrites that file wholesale,
+  never collides with them.
+-->
+<resources>
+    <string name="speed_test">Speed test</string>
+    <string name="speed_test_mbps">%s Mbit/s</string>
+    <string name="speed_test_running">%s…</string>
+    <string name="speed_test_result">%1$s · %2$s in %3$s s · connected in %4$d ms</string>
+    <string name="speed_test_queued">Queued</string>
+    <string name="speed_test_failed">Speed test failed</string>
+    <string name="speed_test_nothing">Nothing to test</string>
+    <string name="group_order_by_speed">By speed</string>
+    <string name="speed_test_url">Speed test URL</string>
+    <string name="speed_test_max_size">Speed test download limit, MB (1–1000)</string>
+    <string name="speed_test_duration">Speed test duration, s (1–60)</string>
+    <string name="speed_test_duration_summary">%s s, counted from the first byte. The test stops at the limit or at this time, whichever comes first</string>
+    <string name="speed_test_connect_timeout">Speed test connect timeout, ms (1000–60000)</string>
+    <string name="speed_test_concurrency">Speed test concurrency (1–8)</string>
+    <string name="speed_test_concurrency_summary">%s. Servers tested at once share your own connection, so each reads slower than it is</string>
+    <string name="speed_test_connections">Speed test connections per server (1–16)</string>
+    <string name="speed_test_connections_summary">%s. One shows what a single download gets, several what the server carries in all</string>
+</resources>

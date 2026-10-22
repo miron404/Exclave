@@ -280,6 +280,21 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val connectionTestConcurrency get() = connectionTestConcurrencyRaw.coerceIn(1, 32)
     // Inner per-stage timeouts (DNS 5s, QUIC/WebSocket handshake 8s) still apply below this.
     val connectionTestTimeout get() = connectionTestTimeoutRaw.coerceIn(500, 30000)
+    var speedTestURL by configurationStore.string(Key.SPEED_TEST_URL) { SPEED_TEST_URL }
+    var speedTestMaxSizeRaw by configurationStore.stringToInt(Key.SPEED_TEST_MAX_SIZE) { 25 }
+    var speedTestDurationRaw by configurationStore.stringToInt(Key.SPEED_TEST_DURATION) { 10 }
+    var speedTestConnectTimeoutRaw by configurationStore.stringToInt(Key.SPEED_TEST_CONNECT_TIMEOUT) { 10000 }
+    var speedTestConcurrencyRaw by configurationStore.stringToInt(Key.SPEED_TEST_CONCURRENCY) { 1 }
+    var speedTestConnectionsRaw by configurationStore.stringToInt(Key.SPEED_TEST_CONNECTIONS) { 1 }
+    /** In bytes; the setting is in megabytes. */
+    val speedTestMaxBytes get() = speedTestMaxSizeRaw.coerceIn(1, 1000) * 1_000_000L
+    /** In milliseconds; the setting is in seconds. */
+    val speedTestDuration get() = speedTestDurationRaw.coerceIn(1, 60) * 1000
+    val speedTestConnectTimeout get() = speedTestConnectTimeoutRaw.coerceIn(1000, 60000)
+    // Downloads at once share the phone's own link, and each reads slower
+    // than the server is, so a fair test runs one.
+    val speedTestConcurrency get() = speedTestConcurrencyRaw.coerceIn(1, 8)
+    val speedTestConnections get() = speedTestConnectionsRaw.coerceIn(1, 16)
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
     var showGroupName by configurationStore.boolean(Key.SHOW_GROUP_NAME)
 

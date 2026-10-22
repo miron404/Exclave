@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="speed_test">Тест скорости</string>
+    <string name="speed_test_mbps">%s Мбит/с</string>
+    <string name="speed_test_running">%s…</string>
+    <string name="speed_test_result">%1$s · %2$s за %3$s с · подключение %4$d мс</string>
+    <string name="speed_test_queued">В очереди</string>
+    <string name="speed_test_failed">Тест скорости не удался</string>
+    <string name="speed_test_nothing">Нечего тестировать</string>
+    <string name="group_order_by_speed">По скорости</string>
+    <string name="speed_test_url">URL теста скорости</string>
+    <string name="speed_test_max_size">Лимит закачки теста скорости, МБ (1–1000)</string>
+    <string name="speed_test_duration">Длительность теста скорости, с (1–60)</string>
+    <string name="speed_test_duration_summary">%s с от первого байта. Тест останавливается на лимите или по времени, смотря что наступит раньше</string>
+    <string name="speed_test_connect_timeout">Таймаут подключения теста скорости, мс (1000–60000)</string>
+    <string name="speed_test_concurrency">Параллельность теста скорости (1–8)</string>
+    <string name="speed_test_concurrency_summary">%s. Серверы, которые тестируются одновременно, делят ваш канал, и каждый показывает меньше, чем может</string>
+    <string name="speed_test_connections">Соединений на сервер в тесте скорости (1–16)</string>
+    <string name="speed_test_connections_summary">%s. Одно показывает, сколько получит одна закачка; несколько — сколько сервер тянет всего</string>
+</resources>

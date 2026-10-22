@@ -656,6 +656,15 @@
         <item>@string/group_order_origin</item>
         <item>@string/group_order_by_name</item>
         <item>@string/group_order_by_delay</item>
+        <item>@string/group_order_by_speed</item>
+    </string-array>
+
+    <!-- GroupOrder: the fork's own orders are numbered apart from upstream's. -->
+    <string-array name="group_order_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>1000</item>
     </string-array>
 
     <string-array name="ssh_auth_type">
