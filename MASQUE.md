@@ -289,11 +289,15 @@ of this tuning only looked through the byte counters, found no socket, and
 silently did nothing. Its test builds the wrappers the way a dial does, and the
 only check that caught it was inspecting a real instance's sockets.
 
-**The core dialer turns on Go's default keepalive otherwise**: a probe after 15
-seconds idle and every 15 seconds after, on every TCP socket it dials. That was
-what kept the HTTP/2 mode alive across a night of idling, at four radio
-wakeups a minute. The HTTP proxy outbound now tunes its sockets too; every
-other TCP outbound in the app still carries the default.
+**Go turns on a keepalive of its own otherwise**: a probe after 15 seconds
+idle and every 15 seconds after, on every TCP socket it dials, and on every
+one `net.FileConn` wraps, which is how the VPN's protected dialer in
+libexclavecore makes its sockets. That was what kept the HTTP/2 mode alive
+across a night of idling, at four radio wakeups a minute. `DialSystem` now
+gives every TCP socket the four minute keepalive unless the outbound's
+sockopt sets one (`quietenIdleTCP` in `transport/internet/longlived.go`), so
+direct connections and the other protocols' sockets are quiet too; the
+tunnels' own tuning then adds the user timeout and the profile's period.
 
 The periodic liveness ping stays off by default. The on-demand ping covers a
 dead path, through proxies included; the periodic one only adds keeping an
