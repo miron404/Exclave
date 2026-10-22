@@ -88,8 +88,11 @@ it (`WarpMasqueBean.isSerialized`) and moves those too, leaving upstream's
 alone.
 
 Room exports the schema of the current version to `app/schemas` at build time,
-and only CI builds here, so `1001.json` is not committed yet. An
-`AutoMigration` from 1001 would need it; a manual `Migration` does not.
+and only CI builds here, so the debug build uploads `app/schemas` as the
+`Schemas` artifact, running KSP again for it since a run from the build cache
+writes none. Commit a new version's file from there: an `AutoMigration` from
+that version needs it. `1001.json` came from there, and the 38 to 1001
+migration was checked against it by applying it to `38.json` in SQLite.
 
 A profile can also be made from scratch: "Cloudflare WARP" in the tools tab
 registers a device and adds the profile. `fmt/warp/WarpEnrollment.kt` repeats
