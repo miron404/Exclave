@@ -19,15 +19,19 @@ on:
       tag:
         description: 'Release Tag'
         required: false
+      arm64_only:
+        description: 'Build arm64-v8a only (y/n)'
+        required: false
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     env:
       # A push is the development cycle, so build only what gets installed.
-      # A manual run builds every ABI and flavour, for a release.
-      ABI_FILTERS: ${{ github.event_name == 'push' && 'arm64-v8a' || '' }}
-      GOMOBILE_TARGET: ${{ github.event_name == 'push' && 'android/arm64' || 'android' }}
+      # A manual run builds every ABI, for a release, unless asked for arm64
+      # only.
+      ABI_FILTERS: ${{ (github.event_name == 'push' || github.event.inputs.arm64_only == 'y') && 'arm64-v8a' || '' }}
+      GOMOBILE_TARGET: ${{ (github.event_name == 'push' || github.event.inputs.arm64_only == 'y') && 'android/arm64' || 'android' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
