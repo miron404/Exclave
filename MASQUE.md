@@ -170,6 +170,22 @@ stops. ICMP answers go through a queue drained by a goroutine of its own. Note
 that mihomo writes them from the reading loop and gets away with it because
 sing-wireguard's device buffers 256 packets; this one buffers none.
 
+**Only one goroutine reads the device.** It runs for the life of the tunnel
+and hands each packet over a channel to whoever is waiting: the outgoing
+pump while a session is up, the supervisor while none is. The pump used to
+read the device itself, under a mutex, and could not be stopped while parked
+there: when its session ended it held the supervisor off, then took the next
+packet and dropped it, though that was the packet that should have brought
+the session back. A packet a pump takes for a session that has just ended is
+now carried into the next one. `TestFirstPacketAfterSessionLossReachesTheSupervisor`.
+
+**Every dial is for a packet.** The supervisor dials only when something in
+the stack wants to send, and after a failure no sooner than the backoff
+allows. It used to retry a failed dial on a timer, up to every 30 seconds,
+for as long as the tunnel existed, which on a network that blocks the
+endpoint was a handshake attempt every half minute all night.
+`TestFailedDialWaitsForDemand`.
+
 **Closing the device must not close the channel the stack delivers on.** A
 packet picked up between the two panics the process with "send on closed
 channel", which a url test over a group landing on this outbound hits readily.
@@ -357,7 +373,11 @@ so keep the two in step when upstream changes them.
 
 Watch for a quic-go bump. 0.60 to 0.61 replaced `http3.ParseCapsule` with a
 stateful `http3.CapsuleParser`, which is why connect-ip-go is forked at all, and
-the datagram and path MTU behaviour described above lives there too.
+the datagram and path MTU behaviour described above lives there too. 0.65 made
+`HTTPStream` return an error as well, which broke connect-ip-go's build, and
+moved restored transport parameters into an event of their own, which the
+probe test reads. Build the core after every upstream merge: a quic-go bump
+there arrives with "Update dependencies" and nothing else to warn of it.
 
 **usque.** Its `api/masque.go` and `api/tunnel.go` are what this was derived
 from, so a change there is worth reading, but do not depend on the module: it
@@ -366,9 +386,9 @@ core pins. Two of the bugs fixed here exist upstream: `MaintainTunnel` writes
 the ICMP answer from its reading goroutine, and the wait for the peer's HTTP/3
 settings has no deadline of its own.
 
-**connect-ip-go.** Two commits on top of upstream, both worth sending back:
+**connect-ip-go.** These commits on top of upstream, all worth sending back:
 
-- the quic-go 0.61 capsule API;
+- the quic-go 0.61 capsule API, and 0.65's `HTTPStream`;
 - the ICMP "packet too big" answer carried a constant 1280 instead of the
   peer's actual datagram limit, so a sender already at 1280 had nothing to
   shrink to and every full size packet was dropped and retransmitted unchanged

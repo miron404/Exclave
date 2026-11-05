@@ -846,11 +846,21 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 v2rayBean.password = it
                             }
                             settings.getString("plugin")?.also { pluginId ->
-                                v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
+                                val pluginOpts = PluginOptions(pluginId, settings.getString("pluginOpts"))
+                                // https://github.com/shadowsocks/simple-obfs does not support "obfs-host=".
+                                if (pluginOpts["obfs-host"] == "") {
+                                    pluginOpts.remove("obfs-host")
+                                }
+                                v2rayBean.plugin = pluginOpts.toString(trimId = false)
                             }
                         } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             settings.getString("plugin")?.also { pluginId ->
-                                v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
+                                val pluginOpts = PluginOptions(pluginId, settings.getString("pluginOpts"))
+                                // https://github.com/shadowsocks/simple-obfs does not support "obfs-host=".
+                                if (pluginOpts["obfs-host"] == "") {
+                                    pluginOpts.remove("obfs-host")
+                                }
+                                v2rayBean.plugin = pluginOpts.toString(trimId = false)
                             }
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
@@ -902,7 +912,12 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             }
                         }
                         settings.getString("plugin")?.also { pluginId ->
-                            v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
+                            val pluginOpts = PluginOptions(pluginId, settings.getString("pluginOpts"))
+                            // https://github.com/shadowsocks/simple-obfs does not support "obfs-host=".
+                            if (pluginOpts["obfs-host"] == "") {
+                                pluginOpts.remove("obfs-host")
+                            }
+                            v2rayBean.plugin = pluginOpts.toString(trimId = false)
                         }
                     }
                 }
@@ -926,7 +941,12 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             v2rayBean.password = it
                         }
                         settings.getString("plugin")?.also { pluginId ->
-                            v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
+                            val pluginOpts = PluginOptions(pluginId, settings.getString("pluginOpts"))
+                            // https://github.com/shadowsocks/simple-obfs does not support "obfs-host=".
+                            if (pluginOpts["obfs-host"] == "") {
+                                pluginOpts.remove("obfs-host")
+                            }
+                            v2rayBean.plugin = pluginOpts.toString(trimId = false)
                         }
                     }
                 }

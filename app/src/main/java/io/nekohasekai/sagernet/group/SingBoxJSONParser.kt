@@ -106,11 +106,10 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                 v2rayBean.headerType = "http"
                                 // Difference from v2ray-core
                                 // TLS is not enforced. If TLS is not configured, plain HTTP 1.1 is used.
-                                outbound.getObject("tls")?.also {
-                                    if (it.getBoolean("enabled") == true) {
-                                        v2rayBean.type = "http"
-                                        v2rayBean.headerType = null
-                                    }
+                                val tls = outbound.getObject("tls")?.getBoolean("enabled") == true
+                                if (tls) {
+                                    v2rayBean.type = "http"
+                                    v2rayBean.headerType = null
                                 }
                                 transport.getString("path")?.also {
                                     v2rayBean.path = it
@@ -119,6 +118,10 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                     v2rayBean.host = it.joinToString("\n")
                                 } ?: transport.getString("host")?.also {
                                     v2rayBean.host = it
+                                }
+                                if (!tls && v2rayBean.host.isNullOrEmpty()) {
+                                    // https://github.com/SagerNet/sing-box/blob/dfb80349bf5779ec0a3f834c9ec2794345bff8f0/transport/v2rayhttp/client.go#L117
+                                    v2rayBean.host = v2rayBean.serverAddress
                                 }
                             }
                             "quic" -> {
@@ -329,12 +332,24 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                         v2rayBean.password = it
                     }
                     outbound.getString("plugin")?.takeIf { it.isNotEmpty() }?.also { pluginId ->
-                        if (pluginId != "obfs-local" && pluginId != "v2ray-plugin") return listOf()
-                        // In sing-box, v2ray-plugin quic mode sends ALPN "h3" but nobody complains about it.
-                        // Let's assume nobody uses v2ray-plugin quic mode in sing-box. Keep it broken.
-                        // https://github.com/SagerNet/sing-box/pull/1934
-                        // https://github.com/ExclaveNetwork/Exclave/issues/488
-                        v2rayBean.plugin = PluginOptions(pluginId, outbound.getString("plugin_opts")).toString(trimId = false)
+                        val pluginOpts = PluginOptions(pluginId, outbound.getString("plugin_opts"))
+                        when (pluginId) {
+                            "v2ray-plugin" -> {
+                                // In sing-box, v2ray-plugin quic mode sends ALPN "h3" but nobody complains about it.
+                                // Let's assume nobody uses v2ray-plugin quic mode in sing-box. Keep it broken.
+                                // https://github.com/SagerNet/sing-box/pull/1934
+                                // https://github.com/ExclaveNetwork/Exclave/issues/488
+                            }
+                            "obfs-local" -> {
+                                // unlike https://github.com/shadowsocks/simple-obfs, sing-box default to "", not "cloudfront.net".
+                                // However, https://github.com/shadowsocks/simple-obfs does not support "obfs-host=".
+                                if (pluginOpts["obfs-host"] == "") {
+                                    pluginOpts.remove("obfs-host")
+                                }
+                            }
+                            else -> return listOf()
+                        }
+                        v2rayBean.plugin = pluginOpts.toString(trimId = false)
                     }
                 }
                 "trojan" -> {

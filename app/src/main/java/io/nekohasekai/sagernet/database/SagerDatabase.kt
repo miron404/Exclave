@@ -115,6 +115,9 @@ import kotlinx.coroutines.launch
     ), AutoMigration(
         from = 37,
         to = 38,
+    ), AutoMigration(
+        from = 38,
+        to = 39,
     )]
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
