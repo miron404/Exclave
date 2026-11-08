@@ -174,6 +174,9 @@ fun enrollWireGuardDevice(): WireGuardBean {
         privateKey = Base64.Default.encode(deviceKey.encoded)
         peerPublicKey = assigned.peerPublicKey
         localAddress = assigned.localAddress
+        // The three bytes the official client writes into the reserved
+        // field of every packet, by which Cloudflare tells devices apart.
+        reserved = assigned.clientId?.joinToString(",") { (it.toInt() and 0xff).toString() }.orEmpty()
         // What WARP itself runs at. The WireGuard default of 1420 does not fit
         // Cloudflare's path and costs a round of fragmentation.
         mtu = 1280
@@ -196,6 +199,8 @@ private class Assignment(
     val endpointV4: String?,
     val endpointV6: String?,
     val localAddress: String,
+    /** The device's client id, three bytes; only the WireGuard API hands it out. */
+    val clientId: ByteArray?,
 )
 
 private fun readAssignment(account: JsonObject): Assignment {
@@ -215,6 +220,9 @@ private fun readAssignment(account: JsonObject): Assignment {
         endpointV4 = hostOf(endpoint.getString("v4")),
         endpointV6 = hostOf(endpoint.getString("v6")),
         localAddress = localAddress,
+        clientId = config.getString("client_id")?.takeIf { it.isNotEmpty() }?.let {
+            runCatching { Base64.Default.decode(it) }.getOrNull()?.takeIf { bytes -> bytes.size == 3 }
+        },
     )
 }
 
