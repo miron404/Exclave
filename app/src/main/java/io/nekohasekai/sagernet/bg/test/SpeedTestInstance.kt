@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.parseJson
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -65,7 +66,7 @@ class SpeedTestInstance(profile: ProxyEntity) : V2RayTestInstance(profile, "", 0
         // Like the URL test: with the system TUN the instance has to keep its
         // sockets out of the VPN itself.
         private fun protectPath() = if (DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.serviceMode == Key.MODE_VPN && SagerNet.started && DataStore.startedProfile > 0) {
-            SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
+            app.cacheDir.toString() + "/protect_path"
         } else ""
     }
 
