@@ -1,0 +1,90 @@
+name: Fork regression tests
+
+on:
+  push:
+    branches: ["dev*"]
+    paths:
+      - "app/**"
+      - "library/**"
+      - "plugin/api/**"
+      - "buildSrc/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "version.properties"
+      - "bin/**"
+      - ".github/workflows/tests.yml"
+  pull_request:
+    branches: ["dev*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: git submodule update --init library/core/deps/exclave-core
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 1.27.3
+          cache-dependency-path: library/core/deps/exclave-core/go.sum
+      - name: Test the pinned core
+        working-directory: library/core/deps/exclave-core
+        run: |
+          go vet ./common/speedtest/... ./proxy/warpmasque/... ./proxy/masque/... ./proxy/wireguard/netstack/... ./proxy/loopback/... ./proxy/http/... ./transport/internet/ ./infra/conf/v4/...
+          go test -race -count=1 ./common/speedtest/... ./proxy/warpmasque/... ./proxy/masque/... ./proxy/wireguard/netstack/... ./proxy/loopback/... ./proxy/http/... ./transport/internet/ ./infra/conf/v4/...
+
+  android:
+    runs-on: ubuntu-latest
+    env:
+      ABI_FILTERS: x86_64
+      GOMOBILE_TARGET: android/amd64
+    steps:
+      - uses: actions/checkout@v7
+      - run: git submodule update --init library/core/deps/exclave-core
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 1.27.3
+          cache-dependency-path: library/core/go.sum
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
+      - uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r30
+      - name: Build test core
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20261011034528-197770444867
+          go install golang.org/x/mobile/cmd/gobind@v0.0.0-20261011034528-197770444867
+          ./run lib core debug
+      - name: Build app and tests
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          ./gradlew :app:downloadAssets :app:assembleOssDebug :app:assembleOssDebugAndroidTest
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          disable-animations: true
+          script: ./gradlew :app:connectedOssDebugAndroidTest
+      - name: Test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Android-test-reports
+          path: |
+            app/build/reports/androidTests
+            app/build/outputs/androidTest-results

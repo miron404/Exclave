@@ -21,6 +21,7 @@
 package io.nekohasekai.sagernet
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.os.Build
@@ -36,20 +37,26 @@ import io.nekohasekai.sagernet.database.DataStore
 
 @Suppress("DEPRECATION")
 class QuickToggleShortcut : Activity(), SagerConnection.Callback {
+
+    companion object {
+        private const val SHORTCUT_ID = "toggle"
+
+        fun buildShortcut(context: Context) = ShortcutInfoCompat.Builder(context, SHORTCUT_ID)
+            .setIntent(Intent(context, QuickToggleShortcut::class.java).setAction(Intent.ACTION_MAIN))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.ic_qu_shadowsocks_launcher))
+            .setShortLabel(context.getString(R.string.quick_toggle))
+            .setLongLabel(context.getString(R.string.quick_toggle))
+            .build()
+    }
+
     private val connection = SagerConnection()
     private var profileId = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.action == Intent.ACTION_CREATE_SHORTCUT) {
-            setResult(RESULT_OK, ShortcutManagerCompat.createShortcutResultIntent(this,
-                ShortcutInfoCompat.Builder(this, "toggle")
-                    .setIntent(Intent(this,
-                        QuickToggleShortcut::class.java).setAction(Intent.ACTION_MAIN))
-                    .setIcon(IconCompat.createWithResource(this,
-                        R.drawable.ic_qu_shadowsocks_launcher))
-                    .setShortLabel(getString(R.string.quick_toggle))
-                    .build()))
+            setResult(RESULT_OK, ShortcutManagerCompat.createShortcutResultIntent(
+                this, buildShortcut(this)))
             finish()
         } else {
             profileId = intent.getLongExtra("profile", -1L)

@@ -114,6 +114,13 @@ object ProfileManager {
         iterator { onUpdated(profile) }
     }
 
+    suspend fun updateSpeed(profileId: Long, speed: Long) {
+        // A test can outlive a subscription update or deletion. Write only
+        // its result and notify listeners with the current profile.
+        if (SagerDatabase.proxyDao.updateSpeed(profileId, speed) == 0) return
+        postUpdate(profileId)
+    }
+
     suspend fun updateProfile(profiles: List<ProxyEntity>) {
         SagerDatabase.proxyDao.updateProxy(profiles)
         profiles.forEach {

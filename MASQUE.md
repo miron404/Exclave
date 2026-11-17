@@ -415,7 +415,24 @@ GOOS=android GOARCH=arm64 CGO_ENABLED=0 go build -tags with_clash \
     github.com/exclavenetwork/exclave-core/v5/main/distro/all
 ```
 
-The Kotlin side cannot; CI is the first thing that compiles it.
+The app's `Fork regression tests` workflow tests the pinned core with the race
+detector, including `common/speedtest`, and runs Android instrumentation tests
+on an x86_64 emulator. They cover the fork's database migrations, speed result
+writes concurrent with profile edits/deletions, WARP backup compatibility,
+front/landing chains and cancellation when the speed test's view is destroyed.
+The core's own MASQUE workflow also runs the speed test package.
+
+With the Android SDK/NDK and Go Mobile installed, the same Android tests can be
+run locally against an x86_64 emulator:
+
+```
+GOMOBILE_TARGET=android/amd64 ./run lib core debug
+./gradlew :app:downloadAssets
+ABI_FILTERS=x86_64 ./gradlew :app:connectedOssDebugAndroidTest
+```
+
+The Room schemas under `app/schemas` are packaged into the test APK so that
+the migration tests validate the resulting schema as well as retained data.
 
 ## Left undone
 

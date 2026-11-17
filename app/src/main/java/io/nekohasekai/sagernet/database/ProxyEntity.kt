@@ -610,6 +610,9 @@ data class ProxyEntity(
         @Update
         fun updateProxy(proxy: ProxyEntity): Int
 
+        @Query("UPDATE proxy_entities SET speed = :speed WHERE id = :id")
+        fun updateSpeed(id: Long, speed: Long): Int
+
         @Update
         fun updateProxy(proxies: List<ProxyEntity>): Int
 

@@ -27,6 +27,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -45,10 +48,10 @@ import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.ktx.getColour
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.isActive
@@ -94,31 +97,48 @@ class SpeedTestDialog(private val fragment: Fragment) {
     private val rows = ArrayList<Row>()
     private val adapter = Adapter()
     private lateinit var dialog: AlertDialog
+    @Volatile
+    private var dismissed = false
 
     /** Tests [load] gives, which runs off the main thread. */
     fun start(load: suspend () -> List<ProxyEntity>) {
         binding.listView.layoutManager = FixedLinearLayoutManager(binding.listView)
         binding.listView.itemAnimator = DefaultItemAnimator()
         binding.listView.adapter = adapter
-        lateinit var mainJob: Job
+        val owner = fragment.viewLifecycleOwner
+        var mainJob: Job? = null
+        val observer = object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                // Dismiss immediately, even if native test cleanup takes time.
+                dismissed = true
+                mainJob?.cancel()
+                dialog.dismiss()
+            }
+        }
         dialog = MaterialAlertDialogBuilder(context)
             .setTitle(R.string.speed_test)
             .setView(binding.root)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
-                mainJob.cancel()
+                mainJob?.cancel()
             }
             .setNeutralButton(" ", null)
             .setCancelable(false)
             .show()
         dialog.getButton(DialogInterface.BUTTON_NEUTRAL).isEnabled = false
-        mainJob = runOnDefaultDispatcher {
+        dialog.setOnDismissListener {
+            dismissed = true
+            mainJob?.cancel()
+            owner.lifecycle.removeObserver(observer)
+        }
+        owner.lifecycle.addObserver(observer)
+        mainJob = owner.lifecycleScope.launch(Dispatchers.Default) {
             val profiles = load()
             if (profiles.isEmpty()) {
                 onMainDispatcher {
                     dialog.dismiss()
                     Toast.makeText(context, R.string.speed_test_nothing, Toast.LENGTH_SHORT).show()
                 }
-                return@runOnDefaultDispatcher
+                return@launch
             }
             val queue = ConcurrentLinkedQueue(profiles.map { Row(it) })
             onMainDispatcher {
@@ -140,7 +160,7 @@ class SpeedTestDialog(private val fragment: Fragment) {
             } finally {
                 // For a group sorted by speed to sort again.
                 withContext(NonCancellable) {
-                    GroupManager.postReload(DataStore.currentGroupId())
+                    profiles.map { it.groupId }.distinct().forEach { GroupManager.postReload(it) }
                 }
             }
             onMainDispatcher {
@@ -184,11 +204,13 @@ class SpeedTestDialog(private val fragment: Fragment) {
             profile.speed = ProxyEntity.SPEED_FAILED
         }
         update(row)
-        ProfileManager.updateProfile(profile)
+        ProfileManager.updateSpeed(profile.id, profile.speed)
     }
 
     private fun update(row: Row) {
+        if (dismissed) return
         binding.listView.post {
+            if (dismissed) return@post
             val index = rows.indexOf(row)
             if (index >= 0) adapter.notifyItemChanged(index)
         }

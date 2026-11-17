@@ -316,16 +316,14 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val proxies = mutableListOf<AbstractBean>()
                 if (fileName != null && fileName.endsWith(".zip")) {
                     // try parse wireguard zip
-                    val zip = ZipInputStream(requireContext().contentResolver.openInputStream(file)!!)
-                    while (true) {
-                        val entry = zip.nextEntry ?: break
-                        if (entry.isDirectory) continue
-                        fileText = zip.bufferedReader().readText()
-                        RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
-                        zip.closeEntry()
-                    }
-                    runCatching {
-                        zip.close()
+                    ZipInputStream(requireContext().contentResolver.openInputStream(file)!!).use { zip ->
+                        while (true) {
+                            val entry = zip.nextEntry ?: break
+                            if (entry.isDirectory) continue
+                            fileText = zip.bufferedReader().readText()
+                            RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
+                            zip.closeEntry()
+                        }
                     }
                 } else {
                     fileText = requireContext().contentResolver.openInputStream(file)!!.use {
@@ -878,7 +876,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                         try {
                             val instance = if (DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.serviceMode == Key.MODE_VPN && SagerNet.started && DataStore.startedProfile > 0) {
-                                V2RayTestInstance(profile, link, timeout, protectPath = app.cacheDir.toString() + "/protect_path")
+                                V2RayTestInstance(profile, link, timeout, protectPath = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path")
                             } else {
                                 V2RayTestInstance(profile, link, timeout)
                             }

@@ -326,7 +326,8 @@ fun buildV2RayConfig(
     val destinationOverride = DataStore.destinationOverride
     val trafficStatistics = !forTest && DataStore.profileTrafficStatistics
     var hasTagDirect = false
-    var directNeedsInterruption = false
+    val singUotEnabled = DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")
+    val singMuxEnabled = DataStore.experimentalFlagsProperties.getBooleanProperty("singmux")
 
     val shouldDumpUID = extraRules.any { it.packages.isNotEmpty() || it.customPackageNames.isNotEmpty() }
     val alerts = mutableListOf<Pair<Int, String>>()
@@ -398,7 +399,7 @@ fun buildV2RayConfig(
                 inbounds.add(InboundObject().apply {
                     tag = "ipc-in"
                     protocol = "ipc"
-                    val path = app.cacheDir.toString() + "/ipc.sock"
+                    val path = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc.sock"
                     val udsFile = File(path)
                     if (udsFile.exists()) udsFile.delete()
                     listen = path
@@ -704,11 +705,8 @@ fun buildV2RayConfig(
                                         pass = password
                                     })
                                 })
-                                if (proxyEntity.naiveBean != null && proxyEntity.naiveBean!!.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty( "singuot")) {
+                                if (proxyEntity.naiveBean != null && proxyEntity.naiveBean!!.singUoT && singUotEnabled) {
                                     uot = true
-                                }
-                                if (proxyEntity.naiveBean != null) {
-                                    directNeedsInterruption = true
                                 }
                             })
                         }
@@ -820,7 +818,7 @@ fun buildV2RayConfig(
                                                                         DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM
                                                                     }
                                                                     if (shouldProtect) {
-                                                                        pluginWorkingDir = app.cacheDir.toString()
+                                                                        pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
                                                                         if (isV2) {
                                                                             opts["__android_vpn"] = ""
                                                                         } else {
@@ -840,7 +838,7 @@ fun buildV2RayConfig(
                                                         }
                                                     }
                                                 }
-                                                if (bean.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty( "singuot")) {
+                                                if (bean.singUoT && singUotEnabled) {
                                                     uot = bean.singUoT
                                                 }
                                             })
@@ -853,20 +851,20 @@ fun buildV2RayConfig(
                                             servers = listOf(SocksOutboundConfigurationObject.ServerObject().apply {
                                                 address = bean.serverAddress
                                                 port = bean.serverPort
-                                                if (bean.username.isNotEmpty() || bean.password.isNotEmpty() && bean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
+                                                if ((bean.username.isNotEmpty() || bean.password.isNotEmpty()) && bean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
                                                     users = listOf(SocksOutboundConfigurationObject.ServerObject.UserObject().apply {
                                                         user = bean.username
                                                         pass = bean.password
                                                     })
                                                 }
-                                                if (bean.protocol == SOCKSBean.PROTOCOL_SOCKS4 || bean.protocol == SOCKSBean.PROTOCOL_SOCKS4A && bean.username.isNotEmpty()) {
+                                                if ((bean.protocol == SOCKSBean.PROTOCOL_SOCKS4 || bean.protocol == SOCKSBean.PROTOCOL_SOCKS4A) && bean.username.isNotEmpty()) {
                                                     users = listOf(SocksOutboundConfigurationObject.ServerObject.UserObject().apply {
                                                         user = bean.username
                                                     })
                                                 }
                                             })
                                             version = bean.protocolVersionName()
-                                            if (bean.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")) {
+                                            if (bean.singUoT && singUotEnabled) {
                                                 uot = bean.singUoT
                                             }
                                         }
@@ -1500,7 +1498,7 @@ fun buildV2RayConfig(
                                         congestionControl = bean.congestionControl
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
-                                        if (bean.singUDPOverStream && DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")) {
+                                        if (bean.singUDPOverStream && singUotEnabled) {
                                             udpOverStream = bean.singUDPOverStream
                                         }
                                     }
@@ -2152,7 +2150,7 @@ fun buildV2RayConfig(
                                 }
                             }
                             if ((bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean)
-                                && bean.singMux && DataStore.experimentalFlagsProperties.getBooleanProperty("singmux")) {
+                                && bean.singMux && singMuxEnabled) {
                                 smux = OutboundObject.SmuxObject().apply {
                                     enabled = bean.singMux
                                     protocol = bean.singMuxProtocol
@@ -2210,7 +2208,6 @@ fun buildV2RayConfig(
                     val mappingPort = mkPort()
                     bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
-                    bean.isChain = true
 
                     inbounds.add(InboundObject().apply {
                         listen = LOCALHOST
@@ -2222,11 +2219,13 @@ fun buildV2RayConfig(
                                 address = bean.serverAddress
                                 network = bean.network()
                                 port = bean.serverPort
+                                if (!forExport && DataStore.interruptReusedConnections && proxyEntity.naiveBean != null) {
+                                    interruptConnections = true
+                                }
                             })
-
                         pastInboundTag = tag
                     })
-                } else if (bean.canMapping() && proxyEntity.needExternal()) {
+                } else if (proxyEntity.needExternal()) {
                     val mappingPort = mkPort()
                     bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
@@ -2241,6 +2240,9 @@ fun buildV2RayConfig(
                                 address = bean.serverAddress
                                 network = bean.network()
                                 port = bean.serverPort
+                                if (!forExport && DataStore.interruptReusedConnections && proxyEntity.naiveBean != null) {
+                                    interruptConnections = true
+                                }
                             })
                         val rule = RoutingObject.RuleObject().apply {
                             type = "field"
@@ -2612,13 +2614,6 @@ fun buildV2RayConfig(
             outbounds.add(OutboundObject().apply {
                 tag = TAG_DIRECT
                 protocol = "freedom"
-                if (!forExport && DataStore.interruptReusedConnections && directNeedsInterruption) {
-                    settings = LazyOutboundConfigurationObject(this,
-                        FreedomOutboundConfigurationObject().apply {
-                            interruptConnections = true
-                        }
-                    )
-                }
             })
         }
 
@@ -2662,7 +2657,7 @@ fun buildV2RayConfig(
         if (!forTest && !forExport) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_DNS_IN
-                val path = app.cacheDir.toString() + "/ipc_dns.sock"
+                val path = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc_dns.sock"
                 val udsFile = File(path)
                 if (udsFile.exists()) udsFile.delete()
                 listen = path
@@ -3125,7 +3120,7 @@ fun buildCustomConfig(proxy: ProxyEntity, forTest: Boolean = false, forExport: B
         inbounds.add(InboundObject().apply {
             tag = "ipc-in"
             protocol = "ipc"
-            val path = app.cacheDir.toString() + "/ipc.sock"
+            val path = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc.sock"
             val udsFile = File(path)
             if (udsFile.exists()) udsFile.delete()
             listen = path
@@ -3146,7 +3141,7 @@ fun buildCustomConfig(proxy: ProxyEntity, forTest: Boolean = false, forExport: B
         })
         inbounds.add(InboundObject().apply {
             tag = TAG_DNS_IN
-            val path = app.cacheDir.toString() + "/ipc_dns.sock"
+            val path = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc_dns.sock"
             val udsFile = File(path)
             if (udsFile.exists()) udsFile.delete()
             listen = path

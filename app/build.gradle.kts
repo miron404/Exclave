@@ -10,6 +10,8 @@ setupApp()
 
 android {
     namespace = "io.nekohasekai.sagernet"
+    defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 }
 
 ksp {
@@ -35,6 +37,10 @@ aboutLibraries {
 }
 
 dependencies {
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    androidTestImplementation(libs.room.testing)
     implementation(fileTree("libs"))
     implementation(project(":plugin:api"))
     implementation(project(":library:proto-stub"))

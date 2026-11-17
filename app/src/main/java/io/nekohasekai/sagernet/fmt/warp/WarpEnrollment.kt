@@ -25,7 +25,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.warpmasque.WarpMasqueBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.getArray
 import io.nekohasekai.sagernet.ktx.getBoolean
@@ -245,7 +244,7 @@ private fun callAPI(
 ): JsonObject {
     val request = Libexclavecore.newHttpClient().apply {
         if (SagerNet.started && DataStore.startedProfile > 0) {
-            useUDS(app.cacheDir.toString() + "/ipc.sock")
+            useUDS(SagerNet.deviceStorage.noBackupFilesDir.toString() + "/ipc.sock")
         }
     }.newRequest().apply {
         setURL(url)
