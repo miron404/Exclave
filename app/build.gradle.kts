@@ -41,6 +41,10 @@ dependencies {
     androidTestImplementation("androidx.test:core-ktx:1.6.1")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
     androidTestImplementation(libs.room.testing)
+    // Instrumentation loads shared classes from the app APK first. Room's
+    // schema serializers need the default interface methods added in 1.8.1;
+    // the app otherwise brings in core 1.7.3 through a transitive dependency.
+    "debugImplementation"("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
     implementation(fileTree("libs"))
     implementation(project(":plugin:api"))
     implementation(project(":library:proto-stub"))
