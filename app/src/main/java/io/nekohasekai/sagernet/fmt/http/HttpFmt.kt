@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.http
 
+import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libexclavecore.Libexclavecore
 
@@ -35,12 +36,29 @@ fun parseHttp(link: String): HttpBean {
         username = url.username
         password = url.password
         name = url.fragment
+        connectUDP = url.queryParameter("connectUDP").isEnabled()
+        uriTemplate = url.queryParameter("uriTemplate")
         if (url.scheme == "https") {
-            // non-standard
             security = "tls"
-            url.queryParameter("sni")?.let {
-                sni = it
-            }
+            sni = url.queryParameter("sni")
+            alpn = url.queryParameter("alpn")?.listByLineOrComma()?.joinToString("\n")
+            // Prefer the canonical spelling if a link contains conflicting aliases.
+            allowInsecure = (url.queryParameter("allowInsecure")
+                ?: url.queryParameter("insecure")
+                ?: url.queryParameter("allow_insecure")).isEnabled()
+            utlsFingerprint = url.queryParameter("fp") ?: url.queryParameter("fingerprint")
+            certificates = url.queryParameter("certificates")
+            pinnedPeerCertificateSha256 = url.queryParameter("pcs")
+                ?: url.queryParameter("pinnedPeerCertificateSha256")
+            pinnedPeerCertificatePublicKeySha256 = url.queryParameter("pinnedPeerCertificatePublicKeySha256")
+            pinnedPeerCertificateChainSha256 = url.queryParameter("pinnedPeerCertificateChainSha256")
+            serverNameToVerify = url.queryParameter("vcn") ?: url.queryParameter("serverNameToVerify")
+            echConfigList = url.queryParameter("ech")
+            echQueryName = url.queryParameter("echQueryName")
+            echEnabled = url.queryParameter("echEnabled")?.isEnabled()
+                ?: (!echConfigList.isNullOrEmpty() || !echQueryName.isNullOrEmpty())
+            mtlsCertificate = url.queryParameter("mtlsCertificate")
+            mtlsCertificatePrivateKey = url.queryParameter("mtlsCertificatePrivateKey")
         }
     }
 }
@@ -62,10 +80,35 @@ fun HttpBean.toUri(): String? {
         builder.password = password
     }
 
-    if (security == "tls" && sni.isNotEmpty()) {
-        // non-standard
-        builder.addQueryParameter("sni", sni)
+    // Query extensions are understood by this fork; other clients may ignore them.
+    if (connectUDP) builder.addQueryParameter("connectUDP", "1")
+    if (uriTemplate.isNotEmpty()) builder.addQueryParameter("uriTemplate", uriTemplate)
+    if (security == "tls") {
+        val parameters = mapOf(
+            "sni" to sni,
+            "alpn" to alpn.listByLineOrComma().joinToString(","),
+            "fp" to utlsFingerprint,
+            "certificates" to certificates,
+            "pcs" to pinnedPeerCertificateSha256,
+            "pinnedPeerCertificatePublicKeySha256" to pinnedPeerCertificatePublicKeySha256,
+            "pinnedPeerCertificateChainSha256" to pinnedPeerCertificateChainSha256,
+            "vcn" to serverNameToVerify,
+            "ech" to echConfigList,
+            "echQueryName" to echQueryName,
+            "mtlsCertificate" to mtlsCertificate,
+            "mtlsCertificatePrivateKey" to mtlsCertificatePrivateKey,
+        )
+        parameters.forEach { (key, value) ->
+            if (value.isNotEmpty()) builder.addQueryParameter(key, value)
+        }
+        if (allowInsecure) builder.addQueryParameter("allowInsecure", "1")
+        // Preserve disabled ECH even when the editor retains a config or query name.
+        if (echEnabled || echConfigList.isNotEmpty() || echQueryName.isNotEmpty()) {
+            builder.addQueryParameter("echEnabled", if (echEnabled) "1" else "0")
+        }
     }
 
     return builder.string
 }
+
+private fun String?.isEnabled() = this == "1" || this.equals("true", ignoreCase = true)
