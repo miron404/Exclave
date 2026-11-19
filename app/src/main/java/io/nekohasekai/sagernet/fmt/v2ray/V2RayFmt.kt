@@ -457,12 +457,10 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             val json = parseJson(finalmask).asJsonObject
             if (!json.isEmpty) {
                 when (bean.type) {
-                    "tcp", "ws", "grpc", "httpupgrade", "http" -> {
-                        // ban Xray TCP finalmask
-                        json.getArray("tcp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also {
-                            error("unsupported")
-                        }
-                    }
+                    // TCP finalmask (including ClientHello fragmentation) is
+                    // optional local behavior, not needed to describe the peer.
+                    // Import the connection without applying these masks.
+                    "tcp", "ws", "grpc", "httpupgrade", "http" -> {}
                     "kcp" -> {
                         json.getArray("udp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also { udpMasks ->
                             if (udpMasks.size !in 1..2) error("unsupported")
@@ -519,12 +517,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                         }
                     }
                     "splithttp" -> {
-                        // leave it broken, I don't care
-                        // ban Xray TCP finalmask
-                        json.getArray("tcp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also {
-                            error("unsupported")
-                        }
-                        // ban Xray UDP finalmask
+                        // Ignore TCP masks here too, as for a plain TCP transport.
+                        // UDP masks still describe unsupported transport behavior.
                         json.getArray("udp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also {
                             error("unsupported")
                         }
