@@ -4,6 +4,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
@@ -84,6 +86,36 @@ class ChainConfigTest {
         assertFalse(hopOutboundTag(head, 7).startsWith(head))
         assertFalse(globalOutboundTag(50).startsWith(globalOutboundTag(5)))
         assertEquals(5L, profileIdOfOutboundTag(head))
+    }
+
+    @Test
+    fun globalRealityVersionReachesGeneratedConfig() {
+        val oldVersion = DataStore.realityClientVersion
+        val profile = ProxyEntity(groupId = group().id).apply {
+            putBean(VLESSBean().apply {
+                initializeDefaultValues()
+                serverAddress = "192.0.2.1"
+                serverPort = 443
+                uuid = "00000000-0000-4000-8000-000000000001"
+                security = "reality"
+                realityPublicKey = "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE"
+                realityFingerprint = "firefox"
+                sni = "tls.example"
+            })
+        }
+        try {
+            for (version in listOf("26.11.9", "99.99.99", "25.5.16")) {
+                DataStore.realityClientVersion = version
+                val config = JsonParser.parseString(buildV2RayConfig(profile, forTest = true).config).asJsonObject
+                val outbound = config.getAsJsonArray("outbounds").first {
+                    it.asJsonObject.get("protocol").asString == "vless"
+                }.asJsonObject
+                assertEquals(version, outbound.getAsJsonObject("streamSettings")
+                    .getAsJsonObject("realitySettings").get("version").asString)
+            }
+        } finally {
+            DataStore.realityClientVersion = oldVersion
+        }
     }
 
     private fun group() = ProxyGroup(name = "Chain regression test").apply {

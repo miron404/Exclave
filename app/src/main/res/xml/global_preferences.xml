@@ -271,6 +271,13 @@
             app:icon="@drawable/ic_baseline_speed_24"
             app:key="speedTestConnections"
             app:title="@string/speed_test_connections" />
+        <EditTextPreference
+            app:defaultValue="26.11.9"
+            app:icon="@drawable/baseline_construction_24"
+            app:key="realityClientVersion"
+            app:title="@string/reality_client_version"
+            app:dialogMessage="@string/reality_client_version_help"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
             app:key="realityDisableX25519Mlkem768"

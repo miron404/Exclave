@@ -133,6 +133,7 @@ object Key {
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"
     const val FRAGMENT_METHOD = "fragmentMethod"
+    const val REALITY_CLIENT_VERSION = "realityClientVersion"
     const val REALITY_DISABLE_X25519MLKEM768 = "realityDisableX25519Mlkem768"
     const val HYSTERIA2_OMIT_MAX_DATAGRAM_FRAME_SIZE = "hysteria2OmitMaxDatagramFrameSize"
     const val GRPC_SERVICE_NAME_COMPAT = "grpcServiceNameCompat"

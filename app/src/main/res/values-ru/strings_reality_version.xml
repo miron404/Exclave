@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reality_client_version">Версия клиента REALITY</string>
+    <string name="reality_client_version_help">Версия, передаваемая серверу REALITY (по умолчанию 26.11.9). Каждое из трёх чисел — от 0 до 255. Сервер может ограничивать и минимальную, и максимальную версию, поэтому 99.99.99 подходит не везде. После изменения переподключитесь. Применяется к профилям приложения; пользовательские JSON-конфигурации используют собственное поле version.</string>
+    <string name="reality_client_version_invalid">Введите три числа от 0 до 255, например 26.11.9</string>
+</resources>

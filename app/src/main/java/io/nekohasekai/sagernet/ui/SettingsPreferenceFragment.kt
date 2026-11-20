@@ -241,6 +241,19 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 getString(summary, it.text.orEmpty())
             }
         }
+        findPreference<EditTextPreference>(Key.REALITY_CLIENT_VERSION)!!.setOnPreferenceChangeListener { _, value ->
+            val text = value as String
+            val parts = text.split('.')
+            if (parts.size != 3 || parts.any { part ->
+                part.isEmpty() || part.any { it !in '0'..'9' } || part.toIntOrNull() !in 0..255
+            }) {
+                snackbar(R.string.reality_client_version_invalid).show()
+                false
+            } else {
+                needReload()
+                true
+            }
+        }
         mtu.onPreferenceChangeListener = reloadListener
         enableVPNInterfaceIPv6Address.isEnabled = serviceMode.value == MODE_VPN
         enableVPNInterfaceIPv6Address.onPreferenceChangeListener = reloadListener

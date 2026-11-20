@@ -961,6 +961,7 @@ fun buildV2RayConfig(
                                         }
                                         "reality" -> {
                                             realitySettings = RealityObject().apply {
+                                                version = DataStore.realityClientVersion
                                                 if (bean.sni.isNotEmpty()) {
                                                     serverName = bean.sni
                                                 }
@@ -1715,6 +1716,7 @@ fun buildV2RayConfig(
                                         }
                                         "reality" -> {
                                             realitySettings = RealityObject().apply {
+                                                version = DataStore.realityClientVersion
                                                 if (bean.sni.isNotEmpty()) {
                                                     serverName = bean.sni
                                                 }
